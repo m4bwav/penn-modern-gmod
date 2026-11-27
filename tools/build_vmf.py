@@ -63,6 +63,23 @@ TEX_COL = "pennmodern/column_blue"        # 512 tall, mapped once onto the 216 u
 TEX_WWHITE = "pennmodern/wall_white"
 TEX_SIGN = "pennmodern/sign_band"         # 1024 x 128 overhead wayfinding band, 40 x 5 ft
 vmf_lib.SCALE.update({TEX_GRANITE: 0.1875, TEX_LIGHTBOX: 0.46875, TEX_CWHITE: 0.375, TEX_WWHITE: 0.375})
+# Area 3, the Amtrak (main) concourse: one level below the street and one above the LIRR concourse
+# (cited), south of the LIRR corridor under Madison Square Garden. Sizes: ai-docs/notes/amtrak-dimensions.md.
+AZ = -20 * FT                             # floor 20 ft below the street, 10 ft above the LIRR floor (derived)
+AC = AZ + 14 * FT                         # 14 ft louvred ceiling (derived)
+RZ = AZ + 18 * FT                         # raised centre ceiling over the escalator atrium (derived)
+AX0, AX1 = 2000, 2000 + 240 * FT          # 240 x 150 ft hall (derived)
+AY1 = -CY - T - 256                       # north wall: a 21 ft stair passage up from the LIRR corridor
+AY0 = AY1 - 150 * FT
+SX0, SX1 = 2928, 3120                     # 16 ft stair opening in the LIRR south wall (clear of the TVM banks)
+RX0, RX1, RY0, RY1 = 2720, 4160, -1920, -1200   # raised ceiling
+EX0, EX1 = 3700, 3700 + 56 * FT           # escalator well (escalator.mdl run), down 30 ft toward the tracks
+EYC = -1560
+WRX, WRY = 2720, -2000                    # glazed ticketed waiting room in the south-west corner
+TEX_TERRAZZO = "pennmodern/floor_terrazzo"
+TEX_CAM = "pennmodern/ceil_amtrak"
+TEX_AMBOARD = "pennmodern/amboard"        # 1024 x 256, mapped once onto a 40 x 10 ft face
+vmf_lib.SCALE.update({TEX_TERRAZZO: 0.5, TEX_CAM: 0.75})
 
 
 def hall(W):
@@ -130,7 +147,10 @@ def lirr(W, E):
     # Concourse shell: floor, side walls and roof over the full height of the pavilion.
     top = PZ + T
     W(box(CX0 - T, -CY - T, LZ - T, CX1 + T, CY + T, LZ, TEX_GRANITE))
-    W(box(CX0 - T, -CY - T, LZ, CX1 + T, -CY, top, TEX_WWHITE))
+    # South wall with the stair opening up to the Amtrak concourse (amtrak()).
+    W(box(CX0 - T, -CY - T, LZ, SX0, -CY, top, TEX_WWHITE))
+    W(box(SX1, -CY - T, LZ, CX1 + T, -CY, top, TEX_WWHITE))
+    W(box(SX0, -CY - T, CC, SX1, -CY, top, TEX_WWHITE))
     W(box(CX0 - T, CY, LZ, CX1 + T, CY + T, top, TEX_WWHITE))
     W(box(CX0 - T, -CY, PZ, CX1 + T, CY, top, TEX_LIGHTBOX))
     W(box(CX1, -CY, LZ, CX1 + T, CY, PZ, TEX_WWHITE))
@@ -170,7 +190,7 @@ def lirr(W, E):
     # Ticket machines in banks of four on the south wall, screens facing into the concourse.
     for xb in (CX0 + 600, CX0 + 2400, PX0 + 120):
         for k in range(4):
-            E(ent("prop_static", (xb + k * 40, -CY, LZ), model="models/pennmodern/tvm.mdl", angles="0 90 0",
+            E(ent("prop_static", (xb + k * 40, -CY + 20, LZ), model="models/pennmodern/tvm.mdl", angles="0 270 0",
                   disableshadows="1"))
     # Lights: a row down each ceiling, cool fill under the light box.
     for x in range(CX0 + 180, CX1, 360):
@@ -186,6 +206,89 @@ def lirr(W, E):
     E(ent("light", ((MX + PX1) // 2, 0, 100), _light="235 240 250 50"))
     E(ent("env_cubemap", (3000, 0, LZ + 100)))
     E(ent("env_cubemap", (4700, 0, LZ + 100)))
+
+
+def amboard_uv(x0, top, s=480 / 1024):
+    # Board face looks -y (seen from the hall looking north, its right is +x).
+    def uv(n):
+        if n[1] > -0.5:
+            return vmf_lib.axes_for(n, 0.25)
+        return "[1 0 0 %g] %g" % (-x0 / s, s), "[0 0 -1 %g] %g" % (top / s, s)
+    return uv
+
+
+def amtrak(W, E):
+    top = RZ + T
+    py0 = -CY - T                          # passage from the LIRR south wall to the hall's north wall
+    # Stair passage: 10 risers of 12 u on 16 u treads from the LIRR floor up to AZ, then a landing.
+    W(box(SX0 - T, AY1, LZ - T, SX0, py0, -56, TEX_WWHITE))
+    W(box(SX1, AY1, LZ - T, SX1 + T, py0, -56, TEX_WWHITE))
+    W(box(SX0, AY1, -120, SX1, py0, -56, TEX_CWHITE))
+    for i in range(10):
+        W(box(SX0, py0 - 16 * (i + 1), LZ - T, SX1, py0 - 16 * i, LZ + 12 * (i + 1), TEX_GRANITE))
+    W(box(SX0, AY1 - T, LZ - T, SX1, py0 - 160, AZ, TEX_TERRAZZO))
+    # Hall shell: walls to the raised roof; the north wall is open over the stair landing.
+    W(box(AX0 - T, AY0 - T, AZ - T, AX0, AY1 + T, top, TEX_WWHITE))
+    W(box(AX1, AY0 - T, AZ - T, AX1 + T, AY1 + T, top, TEX_WWHITE))
+    W(box(AX0, AY0 - T, AZ - T, AX1, AY0, top, TEX_WWHITE))
+    W(box(AX0, AY1, AZ - T, SX0, AY1 + T, top, TEX_WWHITE))
+    W(box(SX1, AY1, AZ - T, AX1, AY1 + T, top, TEX_WWHITE))
+    W(box(SX0, AY1, -120, SX1, AY1 + T, top, TEX_WWHITE))
+    # Floor with the escalator well cut out.
+    wy0, wy1 = EYC - 72, EYC + 72
+    W(box(AX0, AY0, AZ - T, EX0, AY1, AZ, TEX_TERRAZZO))
+    W(box(EX1, AY0, AZ - T, AX1, AY1, AZ, TEX_TERRAZZO))
+    W(box(EX0, AY0, AZ - T, EX1, wy0, AZ, TEX_TERRAZZO))
+    W(box(EX0, wy1, AZ - T, EX1, AY1, AZ, TEX_TERRAZZO))
+    # Louvred 14 ft ceiling round the raised centre, which steps up 4 ft over the atrium.
+    for x0, y0, x1, y1 in ((AX0, AY0, RX0, AY1), (RX1, AY0, AX1, AY1), (RX0, AY0, RX1, RY0), (RX0, RY1, RX1, AY1)):
+        W(box(x0, y0, AC, x1, y1, top, TEX_CAM))
+    W(box(RX0, RY0, RZ, RX1, RY1, top, TEX_CWHITE))
+    # Escalator down toward the tracks: sealed landing 30 ft below until area 5 adds the platforms.
+    lz = AZ - 30 * FT
+    lx0, ly0, ly1 = EX0 - 240, EYC - 140, EYC + 140
+    W(box(lx0 - T, ly0 - T, lz - T, EX1 + T, ly1 + T, lz, TEX_GRANITE))
+    W(box(lx0 - T, ly0 - T, lz, lx0, ly1 + T, AZ - T, TEX_WWHITE))
+    W(box(EX1, ly0 - T, lz, EX1 + T, ly1 + T, AZ - T, TEX_WWHITE))
+    W(box(lx0, ly0 - T, lz, EX1, ly0, AZ - T, TEX_WWHITE))
+    W(box(lx0, ly1, lz, EX1, ly1 + T, AZ - T, TEX_WWHITE))
+    W(yprism([(EX0, lz), (EX1, lz), (EX1, AZ)], EYC - 63, EYC + 63, "tools/toolsplayerclip"))
+    E(ent("prop_static", ((EX0 + EX1) // 2, EYC, AZ), model="models/pennmodern/escalator.mdl", angles="0 90 0",
+          solid="0", disableshadows="1"))
+    # Glass rail round the well, open at the top (east) end of the escalator.
+    for x0, x1, ya, yb in ((EX0, EX1, wy0 - 2, wy0), (EX0, EX1, wy1, wy1 + 2), (EX0 - 2, EX0, wy0 - 2, wy1 + 2)):
+        W(box(x0, ya, AZ, x1, yb, AZ + 42, TEX_GLASS))
+    # Blue columns with light halos (amcol.mdl) on a 30 ft grid north and south of the atrium.
+    for x in range(AX0 + 360, AX1, 360):
+        for y in (AY1 - 360, AY0 + 360):
+            if not (x < WRX + 40 and y < WRY):
+                E(ent("prop_static", (x, y, AZ), model="models/pennmodern/amcol.mdl", angles="0 0 0"))
+    # Departures board on the north wall, east of the stair.
+    bx = 3360
+    vmf_lib.FACEUV[TEX_AMBOARD] = amboard_uv(bx, AZ + 160)
+    W(box(bx, AY1 - 8, AZ + 40, bx + 480, AY1, AZ + 160, TEX_AMBOARD))
+    # Ticket counters along the west wall: lit back office, counter, glass screen above it.
+    W(box(AX0, -1900, AZ, AX0 + 4, -1100, AC, TEX_SHOP))
+    W(box(AX0 + 60, -1900, AZ, AX0 + 96, -1100, AZ + 42, TEX_TRIM))
+    W(box(AX0 + 60, -1900, AZ + 42, AX0 + 62, -1100, AZ + 96, TEX_GLASS))
+    # Shops along the south wall east of the waiting room.
+    W(box(WRX + 120, AY0, AZ, AX1, AY0 + 4, AZ + 12 * FT, TEX_SHOP))
+    # Ticketed waiting room: glazed walls to the ceiling with a 10 ft door, rows of black seats.
+    W(box(WRX, AY0, AZ, WRX + 4, WRY, AC, TEX_GLASS))
+    W(box(AX0, WRY, AZ, 2400, WRY + 4, AC, TEX_GLASS))
+    W(box(2520, WRY, AZ, WRX + 4, WRY + 4, AC, TEX_GLASS))
+    for y in (-2120, -2260, -2400):
+        for x in (2150, 2350, 2560):
+            E(ent("prop_static", (x, y, AZ), model="models/pennmodern/seats.mdl", angles="0 90 0"))
+    # Lights: a grid under the ceiling, brighter in the atrium.
+    for x in range(AX0 + 180, AX1, 360):
+        for y in range(AY1 - 180, AY0, -360):
+            atrium = RX0 < x < RX1 and RY0 < y < RY1
+            E(ent("light", (x, y, (RZ if atrium else AC) - 20), _light="250 245 235 %d" % (70 if atrium else 45)))
+    E(ent("light", ((lx0 + EX1) // 2, EYC, lz + 120), _light="240 240 235 50"))
+    E(ent("light", ((SX0 + SX1) // 2, py0 - 100, -150), _light="240 240 235 30"))
+    E(ent("env_cubemap", (3000, -1300, AZ + 100)))
+    E(ent("env_cubemap", (4200, -1800, AZ + 100)))
 
 
 def board_uv(x0, s=0.3515625):
@@ -287,6 +390,7 @@ def build():
     side_halls(W, E)
     pylons(W)
     lirr(W, E)
+    amtrak(W, E)
     props(E)
     ents += [
         ent("light_environment", (0, 0, H - 64), angles="-60 30 0", pitch="-60",

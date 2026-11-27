@@ -1,5 +1,5 @@
 """Rough top-down plan of gm_penn_modern from the VMF: brushes at chest height on the hall floor
-(z 0) dark, on the West End Concourse below (z -30 ft) blue, the escalator clips grey, plus the
+(z 0) dark, on the Amtrak concourse (z -20 ft) green, on the West End Concourse below (z -30 ft) blue, the escalator clips grey, plus the
 spawn and labels. +x (east, toward Eighth Avenue) to the right, +y (north) up.
 
 python tools/make_map.py [out.png]
@@ -13,7 +13,7 @@ OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "docs/level-map.png")
 FT = 12
 LEVELS = ((0, (70, 62, 56)), (-30 * FT, (60, 110, 170)))
 txt = VMF.read_text()
-hall, lower, clip = [], [], []
+hall, lower, amtrak, clip = [], [], [], []
 for blk in re.split(r"(?m)^\s*solid$", txt)[1:]:
     blk = re.split(r"(?m)^\s*(?:entity|editor)$", blk)[0]
     pts = [tuple(map(float, p)) for p in re.findall(r"\(([-\d.]+) ([-\d.]+) ([-\d.]+)\)", blk)]
@@ -28,8 +28,10 @@ for blk in re.split(r"(?m)^\s*solid$", txt)[1:]:
         hall.append(r)
     elif min(zs) <= -30 * FT + 48 <= max(zs):
         lower.append(r)
+    elif min(zs) <= -20 * FT and -20 * FT + 48 <= max(zs):
+        amtrak.append(r)
 spawn = [(float(x), float(y)) for x, y in re.findall(r'info_player_start"[^}]*?"origin" "([-\d.]+) ([-\d.]+)', txt, re.S)]
-allr = hall + lower
+allr = hall + lower + amtrak
 x0, y0 = min(r[0] for r in allr), min(r[1] for r in allr)
 x1, y1 = max(r[2] for r in allr), max(r[3] for r in allr)
 W = 1600; s = (W - 120) / (x1 - x0)
@@ -43,6 +45,7 @@ for g in range(0, int((x1 - x0) / FT) + 1, 50):
 def rect(r, fill):
     a, b = P(r[0], r[3]), P(r[2], r[1]); d.rectangle((a[0], a[1], b[0], b[1]), fill=fill)
 for r in lower: rect(r, LEVELS[1][1])
+for r in amtrak: rect(r, (70, 140, 90))
 for r in clip: rect(r, (175, 175, 175))
 for r in hall: rect(r, LEVELS[0][1])
 for x, y in spawn:
@@ -50,9 +53,10 @@ for x, y in spawn:
 for lbl, x, y in (("Moynihan Train Hall", 0, 520), ("Escalators down", 0, 0), ("Stairs to balcony", -700, -640),
                   ("Side hall and shops (balcony over)", 300, -800), ("Side hall and shops", 300, 800),
                   ("West End Concourse below (blue)", 0, -420), ("Under Eighth Avenue", 1620, 330), ("LIRR concourse (blue)", 3000, 250),
-                  ("33rd St pavilion, escalator up", 4800, -500)):
+                  ("33rd St pavilion, escalator up", 4800, -500), ("Amtrak concourse (green)", 3440, -1100),
+                  ("Stair up from LIRR", 3024, -540), ("Waiting room", 2360, -2230), ("Escalator to tracks", 4036, -1760)):
     cx, cy = P(x, y); w = d.textlength(lbl, font=f); d.rectangle((cx-w/2-6, cy-16, cx+w/2+6, cy+14), fill=(255, 255, 255)); d.text((cx-w/2, cy-13), lbl, fill=(30, 30, 30), font=f)
 d.text((60, 30), "gm_penn_modern: rough plan", fill=(30, 30, 30), font=fb)
-d.text((60, 78), f"dark = hall level at chest height, blue = concourses 30 ft below, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
+d.text((60, 78), f"dark = hall level at chest height, green = Amtrak 20 ft below, blue = concourses 30 ft below, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
 d.text((60, H-45), "Generated from src/gm_penn_modern.vmf by tools/make_map.py", fill=(120, 120, 120), font=f)
 OUT.parent.mkdir(parents=True, exist_ok=True); img.save(OUT); print("wrote", OUT, len(hall), len(lower), len(clip))

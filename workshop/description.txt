@@ -1,9 +1,11 @@
-[h1]Penn Station today: Moynihan Train Hall and the LIRR concourse[/h1]
+[h1]Penn Station today: Moynihan Train Hall, the LIRR and Amtrak concourses[/h1]
 New York's Penn Station as it is now, at true scale. It starts in Moynihan Train Hall, opened in 2021 inside the old Farley post office across Eighth Avenue: a 31,000 sq ft hall under a 92 ft glass skylight on gabled steel trusses, the four-faced clock hanging in the middle, lit shop fronts under balconies on both sides, stairs up to the balconies and two pairs of escalators down to the West End Concourse.
 
 Update 0.2.0 adds the LIRR concourse: walk through the passage under Eighth Avenue into the 57 ft wide corridor rebuilt in 2023, with wood-slat and lit white ceilings, white-and-blue columns with departure boards, ticket machines, and the 33rd Street entrance hall under its 40 ft lit ceiling grid.
 
-The Amtrak and NJ Transit concourses under Madison Square Garden, the platforms with a train and the Eighth Avenue entrances will follow in updates.
+Update 0.3.0 adds the Amtrak concourse: climb the stair from the LIRR corridor into the old main concourse under Madison Square Garden, with round blue columns ringed by lights under a louvred ceiling, a big departures board, ticket counters, a glazed waiting room and an escalator down toward the tracks.
+
+The NJ Transit concourse, the platforms with a train and the Eighth Avenue entrances will follow in updates.
 
 [h2]Details[/h2]
 [list]

@@ -262,3 +262,44 @@ dr.rectangle((60, 260, 196, 276), fill=(30, 30, 32))
 dr.rectangle((150, 300, 220, 340), fill=(40, 40, 44))
 dr.rectangle((50, 380, 206, 430), fill=(35, 35, 38))
 save(np.asarray(im, float), "tvm_front", UNLIT, surf="metal", model=True)
+
+# --- Area 3, the Amtrak concourse (refs: Amtrak_terminal_New_York_Penn_December_27_2022.jpg,
+# NY_Penn_Station_Amtrak_Terminal.jpg, Penn_Station_concourse.jpg) ---
+# Terrazzo floor: pale grey with fine dark and white chips, faint slab joints every 256 texels.
+img = np.zeros((N, N, 3)) + [196, 198, 200]
+img *= (1 + fbm(N, 5) * 0.05)[..., None]
+chips = rng.random((N, N))
+img[chips < 0.03] *= 0.6
+img[chips > 0.985] = [238, 238, 236]
+img[((yy % 256) < 2) | ((xx % 256) < 2)] *= 0.85
+save(img, "floor_terrazzo", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$envmap" "env_cubemap"\n\t"$envmaptint" "[0.12 0.12 0.12]"\n}\n')
+
+# Amtrak ceiling: charcoal louvre slats with square downlights (unlit, so it reads as a lit ceiling).
+img = np.zeros((N, N, 3)) + [58, 60, 64]
+img[(yy % 16) < 3] = [34, 35, 38]
+sq = ((xx % 256) > 112) & ((xx % 256) < 144) & ((yy % 256) > 112) & ((yy % 256) < 144)
+img[sq] = [255, 250, 236]
+save(img, "ceil_amtrak", UL, surf="metal")
+
+# Amtrak departures board, 40 x 10 ft: blue header, white and amber train rows on black.
+im = Image.new("RGB", (1024, 256), (6, 6, 8))
+dr = ImageDraw.Draw(im)
+dr.rectangle((0, 0, 1023, 34), fill=(16, 50, 110))
+dr.text((512, 17), "DEPARTURES", font=font(26), fill=(255, 255, 255), anchor="mm")
+for x, h in ((20, "Time"), (110, "Train"), (290, "Destination"), (700, "Status"), (900, "Track")):
+    dr.text((x, 46), h, font=font(14), fill=(170, 170, 175), anchor="lm")
+rows = (("5:05", "Acela 2165", "Boston South Station", "On Time", "14"), ("5:12", "NE Regional 173", "Washington DC", "Boarding", "9"),
+        ("5:20", "Empire 241", "Albany-Rensselaer", "On Time", ""), ("5:30", "Keystone 655", "Harrisburg", "On Time", ""),
+        ("5:45", "Acela 2259", "Boston South Station", "5 Late", ""), ("6:00", "NE Regional 135", "Newport News", "On Time", ""),
+        ("6:05", "Adirondack 69", "Montreal", "On Time", ""), ("6:20", "Carolinian 79", "Charlotte", "On Time", ""))
+for i, r in enumerate(rows):
+    y = 72 + i * 23
+    cols = ((255, 255, 255), (255, 190, 40), (255, 255, 255),
+            (120, 220, 120) if r[3] == "Boarding" else (255, 190, 40), (255, 255, 255))
+    for x, txt, col in zip((20, 110, 290, 700, 900), r, cols):
+        dr.text((x, y), txt, font=font(17), fill=col, anchor="lm")
+save(np.asarray(im, float), "amboard", UL, surf="metal")
+
+# Column halo: the ring of lights round each blue column under the ceiling (model material).
+save(np.zeros((64, 64, 3)) + [255, 250, 232], "halo", UNLIT, surf="metal", model=True)
