@@ -1,0 +1,5 @@
+wells           147 fps
+amtrak_wait     147 fps
+njt_west        147 fps
+njt_vault       146 fps
+njt_tickets     147 fps

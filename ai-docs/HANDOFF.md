@@ -1,14 +1,14 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-27 (session 10)
+Updated: 2026-11-27 (session 11)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
-- Chain: session 10 of 40
+- Chain: session 11 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
 - Workshop ID: 3846578407 (public, created session 7; default in tools/package.sh). Updates: sh tools/package.sh "note" [previews].
-- Version: 0.3.0 (tag v0.3.0, Moynihan + LIRR + Amtrak concourses).
+- Version: 0.4.0 (tag v0.4.0, Moynihan + LIRR + Amtrak + NJ Transit concourses).
 
 ## Grants
 - Driver: chain_loop.py, PID 381748 (started 2026-11-26 21:35, chainwright 0.16.0 chain_loop.py, stdout/stderr C:/Users/m4bwa/.chainwright/penn-modern-driver.out/.err), prompt copy C:/Users/m4bwa/.chainwright/penn-modern-prompt.md, stop check C:/Users/m4bwa/.chainwright/penn_modern_stop.py, log C:/Users/m4bwa/.chainwright/penn-modern-chain.log, ledger C:/Users/m4bwa/.chainwright/penn-modern-ledger.json. Bounds: 40 sessions, 24 h, 180 min per session, limit wait 1800 s x 12, retry failed 1. Sessions it starts never start another driver.
@@ -35,9 +35,12 @@ Updated: 2026-11-27 (session 10)
 
 - Session 10 (branch s10-amtrak): area 3, the Amtrak (old main) concourse. 7 refs (CC0 / CC BY / BY-SA) in refs/SOURCES.md, ai-docs/notes/amtrak-dimensions.md. build_vmf.py amtrak(): 240 x 150 ft hall at z -240 (one level above the LIRR, cited) south of the LIRR corridor, joined by a 16 ft stair through the LIRR south wall (x 2928..3120); louvred 14 ft ceiling (ceil_amtrak, unlit) with a raised white centre, amcol.mdl blue columns with light halos, amboard departures board, ticket counters, glazed waiting room with seats.mdl rows, escalator well down to a sealed landing 30 ft below (for area 5). LIRR TVMs fixed: they were black and faced the wall (yaw 270, origin 20 u off the wall). Full compile: vertexes 2143, faces 1513, brushes 199, BSP 8.0 MB; walk 10/10 PASS (to_amtrak, esc_amtrak_down/up new); shots/20261127-0013 all 146 fps (+ -0019 tvm). 0.3.0: README, level map (Amtrak in green), licence-audit-0.3.0.md, Workshop update (EResult 1), tag and release.
 
+- Session 11 (branch s11-njt): area 4, the NJ Transit concourse. 2 CC0 refs in refs/SOURCES.md, ai-docs/notes/njt-dimensions.md. build_vmf.py njt(): 200 x 60 ft hall at the Amtrak floor (cited: same level) through a 20 ft opening in the Amtrak east wall; diamond pink/grey granite floor (floor_njt), cream marble walls (wall_njt), 12 ft white side ceilings, a 20 ft vault down the middle with njtruss.mdl white arched trusses every 10 ft on njcol.mdl flared columns, track gates band on the north wall (trackgates), NJ Transit ticket windows on the south wall (njt_tickets). New glass_clean material replaces stock glasswindow007a on every brush (Amtrak waiting room polish); translucent VTFs need the EIGHTBITALPHA flag (pm_textures.save sets it). Full compile: vertexes 2285, faces 1599, brushes 214, BSP 9.1 MB; walk 11/11 PASS (to_njt new); shots/20261127-0048 all 23 cams 146+ fps. 0.4.0: README, level map, compare.py njt set, licence-audit-0.4.0.md, Workshop update, tag and release.
+
 ## Next
-1. Session 11: area 4, the NJ Transit concourse (near Seventh Avenue, first level below the street, cited; east of the Amtrak hall). Refs on Commons first (CC0/BY/BY-SA, logged), dimensions note, blockout joined to the Amtrak hall through a real opening (east wall x 4880), walk route, shots. Leftover polish: Amtrak waiting-room glass (glasswindow007a looks dirty up close; a cleaner glass VMT), LIRR benches and ticket office.
-2. Wiki: still no repo until a first page is saved at https://github.com/m4bwav/penn-modern-gmod/wiki/_new in a signed-in browser; then wikiwright.
+1. Session 12: area 5, platforms with a train. Refs on Commons first (platforms, NJ Transit / Amtrak / LIRR trains; CC0/BY/BY-SA, logged), dimensions note (platform length/width, track gauge, car sizes), then blockout: stairs down from the NJ Transit track gates and the Amtrak escalator's sealed landing (x 3460..4372, z -600) to an island platform between two tracks, a train as MDL (multilevel car). Mind the vertex budget: the train and platform canopy repeats are models.
+2. Leftover polish: LIRR benches and ticket office; NJT gates are a painted band (real doors/stairs come with area 5); the NJT vault crown is at z 0 and must stay under area 6's street.
+3. Wiki: still no repo until a first page is saved at https://github.com/m4bwav/penn-modern-gmod/wiki/_new in a signed-in browser; then wikiwright.
 
 ## Waiting on Mark
 - Nothing.

@@ -14,7 +14,11 @@ LIRR = {  # LIRR concourse (area 2)
     "pavilion": "LIRR_Penn_Station_2025a.jpg",
     "lirr_east": "Penn_Station_LIRR_concourse_2.jpg",
 }
-SETS = {"lirr": LIRR}  # later areas add their sets here
+NJT = {  # NJ Transit concourse (area 4)
+    "njt_west": "NJ_Transit_concourse_New_York_Penn_Station_November_27_2023.jpg",
+    "njt_tickets": "NJ_Transit_Ticket_Counter_Penn_Station_NY.jpg",
+}
+SETS = {"lirr": LIRR, "njt": NJT}  # later areas add their sets here
 d, W, H = sys.argv[1], 640, 400
 lower = sys.argv[2:3] and sys.argv[2]
 if lower:

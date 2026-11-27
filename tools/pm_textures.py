@@ -38,6 +38,8 @@ def save(img, name, vmt=None, surf="stone", alpha=None, model=False):
     Image.fromarray(np.dstack([rgb, a]) if alpha is not None else rgb).save(ROOT / "shots" / "tex" / f"{name}.png")
     tex = vtf.VTF(w, h, fmt=vtf.ImageFormats.DXT5 if alpha is not None else vtf.ImageFormats.DXT1)   # DXT cuts the BSP ~6x
     tex.get().copy_from(np.dstack([rgb, a]).tobytes(), vtf.ImageFormats.RGBA8888)
+    if alpha is not None:
+        tex.flags |= vtf.VTFFlags.EIGHTBITALPHA   # Source reads translucency from this flag, not the format
     tex.compute_mipmaps()
     d, path = (MMAT, "models/pennmodern") if model else (MAT, "pennmodern")
     d.mkdir(parents=True, exist_ok=True)
@@ -303,3 +305,59 @@ save(np.asarray(im, float), "amboard", UL, surf="metal")
 
 # Column halo: the ring of lights round each blue column under the ceiling (model material).
 save(np.zeros((64, 64, 3)) + [255, 250, 232], "halo", UNLIT, surf="metal", model=True)
+
+# --- Area 4, the NJ Transit concourse (refs: NJ_Transit_concourse_New_York_Penn_Station_November_27_2023.jpg,
+# NJ_Transit_Ticket_Counter_Penn_Station_NY.jpg) ---
+# Floor: diamonds of pink and grey granite with small black squares where the corners meet.
+d1, d2 = ((xx + yy) // 256) % 2, ((xx - yy + N) // 256) % 2
+img = np.where((d1 ^ d2)[..., None] == 1, [176, 140, 126], [190, 192, 194]).astype(float)
+img *= (1 + (rng.random((N, N)) - .5) * 0.22)[..., None]
+img *= (1 + fbm(N, 5) * 0.06)[..., None]
+cx, cy = (xx + yy) % 256, (xx - yy + N) % 256
+img[(np.minimum(cx, 256 - cx) < 18) & (np.minimum(cy, 256 - cy) < 18)] = [30, 30, 32]
+save(img, "floor_njt", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$envmap" "env_cubemap"\n\t"$envmaptint" "[0.1 0.1 0.1]"\n}\n')
+
+# Wall: cream marble panels with tan stripes and fine veins.
+img = np.zeros((N, N, 3)) + [222, 204, 176]
+img *= (1 + fbm(N, 6) * 0.08)[..., None]
+img[(yy % 128) < 14] = img[(yy % 128) < 14] * [0.86, 0.76, 0.66]
+img[((yy % 256) < 2) | ((xx % 256) < 2)] *= 0.8
+save(img, "wall_njt")
+
+# Track gates band, 200 x 12.5 ft on the north wall: 10 bays of marble, each with a brown dado,
+# a gold-framed glass door under a black TRACK sign and a departure screen.
+im = Image.new("RGB", (2048, 128), (222, 204, 176))
+dr = ImageDraw.Draw(im)
+dr.rectangle((0, 100, 2047, 127), fill=(150, 80, 40))
+for i in range(10):
+    x = int(i * 204.8)
+    dr.line((x, 0, x, 127), fill=(190, 170, 140), width=2)
+    dr.rectangle((x + 70, 34, x + 134, 127), fill=(160, 130, 60))
+    dr.rectangle((x + 76, 40, x + 128, 127), fill=(70, 80, 84))
+    dr.rectangle((x + 70, 10, x + 134, 30), fill=(14, 14, 16))
+    dr.text((x + 102, 20), "TRACK %d" % (i + 1), font=font(12), fill=(255, 255, 255), anchor="mm")
+    dr.rectangle((x + 150, 14, x + 196, 44), fill=(10, 10, 40))
+    for r in range(4):
+        dr.line((x + 153, 20 + r * 6, x + 193, 20 + r * 6), fill=((200, 40, 40), (40, 160, 80), (255, 190, 40), (230, 230, 230))[r], width=2)
+save(np.asarray(im, float), "trackgates", UL)
+
+# NJ Transit ticket windows, 80 x 10 ft: black fascia with the name, lit windows with numbers.
+im = Image.new("RGB", (1024, 128), (238, 232, 214))
+dr = ImageDraw.Draw(im)
+dr.rectangle((0, 0, 1023, 30), fill=(16, 16, 18))
+dr.text((512, 15), "NJ TRANSIT Tickets", font=font(22), fill=(240, 240, 240), anchor="mm")
+for i in range(8):
+    x = i * 128
+    dr.rectangle((x + 6, 36, x + 122, 92), fill=(250, 248, 236))
+    dr.line((x, 30, x, 127), fill=(200, 190, 170), width=3)
+    dr.rectangle((x + 46, 36, x + 82, 48), fill=(240, 240, 240))
+    dr.text((x + 64, 42), "WINDOW %d" % (i + 1), font=font(8), fill=(20, 20, 20), anchor="mm")
+dr.rectangle((0, 92, 1023, 127), fill=(226, 214, 190))
+save(np.asarray(im, float), "njt_tickets", UL)
+
+# Clean glass for rails, screens and glazed walls: faint blue-green tint, mostly clear (replaces the
+# stock glasswindow007a, which read as dirty up close; an env_cubemap sheen rendered white unbuilt).
+save(np.zeros((64, 64, 3)) + [150, 175, 180], "glass_clean",
+     '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n\t"$translucent" "1"\n}\n',
+     surf="glass", alpha=np.full((64, 64), 28))

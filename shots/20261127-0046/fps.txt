@@ -1,0 +1,3 @@
+hall_up         146 fps
+amtrak_wait     146 fps
+njt_tickets     146 fps

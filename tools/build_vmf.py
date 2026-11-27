@@ -40,7 +40,7 @@ BOARDS = ("pennmodern/board_name", "pennmodern/board_info")
 # multiples of 360 in x and 180 in z so the texture origin lines up.
 vmf_lib.SCALE.update({TEX_FLOOR: 0.375, TEX_WALL: 0.5, TEX_TRIM: 0.25, TEX_SHOP: 0.375,
                       BOARDS[0]: 0.3515625, BOARDS[1]: 0.3515625, TEX_PYLON: 0.140625})
-TEX_GLASS = "glass/glasswindow007a"
+TEX_GLASS = "pennmodern/glass_clean"      # pm_textures.py; the stock glasswindow007a looked dirty up close
 STW, STL = 6 * FT, 22 * 16                # balcony stair: 6 ft wide, 22 risers of 12 u on 16 u treads
 TEX_SKY = "tools/toolsskybox"
 # Area 2, the LIRR concourse (2023 rebuild) east of Eighth Avenue at the West End Concourse level.
@@ -80,6 +80,19 @@ TEX_TERRAZZO = "pennmodern/floor_terrazzo"
 TEX_CAM = "pennmodern/ceil_amtrak"
 TEX_AMBOARD = "pennmodern/amboard"        # 1024 x 256, mapped once onto a 40 x 10 ft face
 vmf_lib.SCALE.update({TEX_TERRAZZO: 0.5, TEX_CAM: 0.75})
+# Area 4, the NJ Transit concourse: same level as the Amtrak hall (cited), east of it toward Seventh
+# Avenue. Sizes: ai-docs/notes/njt-dimensions.md. Long axis x, the track gates on its north wall.
+NX0, NX1 = AX1 + T, AX1 + T + 200 * FT    # 200 ft modelled (derived)
+NY0, NY1 = -1800, -1080                   # 60 ft wide (derived)
+OY0, OY1 = -1560, -1320                   # 20 ft opening in the Amtrak hall's east wall, 12 ft high
+NC = AZ + 12 * FT                         # 12 ft side ceilings (derived)
+VY0, VY1 = -1580, -1300                   # trussed white vault down the middle (njtruss.mdl)
+VZ = AZ + 20 * FT                         # vault crown 20 ft (derived; reaches street level, z 0)
+TEX_NJFLOOR = "pennmodern/floor_njt"
+TEX_NJWALL = "pennmodern/wall_njt"
+TEX_GATES = "pennmodern/trackgates"       # 2048 x 128, mapped once onto the north wall, 200 x 12.5 ft
+TEX_NJTIX = "pennmodern/njt_tickets"      # 1024 x 128, mapped once onto an 80 x 10 ft counter front
+vmf_lib.SCALE.update({TEX_NJFLOOR: 0.25, TEX_NJWALL: 0.375})
 
 
 def hall(W):
@@ -229,7 +242,8 @@ def amtrak(W, E):
     W(box(SX0, AY1 - T, LZ - T, SX1, py0 - 160, AZ, TEX_TERRAZZO))
     # Hall shell: walls to the raised roof; the north wall is open over the stair landing.
     W(box(AX0 - T, AY0 - T, AZ - T, AX0, AY1 + T, top, TEX_WWHITE))
-    W(box(AX1, AY0 - T, AZ - T, AX1 + T, AY1 + T, top, TEX_WWHITE))
+    W(box(AX1, AY0 - T, AZ - T, AX1 + T, OY0, top, TEX_WWHITE))     # east wall, open into NJ Transit (njt())
+    W(box(AX1, OY1, AZ - T, AX1 + T, AY1 + T, top, TEX_WWHITE))
     W(box(AX0, AY0 - T, AZ - T, AX1, AY0, top, TEX_WWHITE))
     W(box(AX0, AY1, AZ - T, SX0, AY1 + T, top, TEX_WWHITE))
     W(box(SX1, AY1, AZ - T, AX1, AY1 + T, top, TEX_WWHITE))
@@ -289,6 +303,57 @@ def amtrak(W, E):
     E(ent("light", ((SX0 + SX1) // 2, py0 - 100, -150), _light="240 240 235 30"))
     E(ent("env_cubemap", (3000, -1300, AZ + 100)))
     E(ent("env_cubemap", (4200, -1800, AZ + 100)))
+
+
+def band_uv(x0, x1, top, su, sv, north):
+    # A band mapped once: on the north wall (normal -y) its left edge is x0, on the south wall
+    # (normal +y, seen looking -y) its left edge is x1. Other faces get the default axes.
+    def uv(n):
+        if north and n[1] < -0.5:
+            return "[1 0 0 %g] %g" % (-x0 / su, su), "[0 0 -1 %g] %g" % (top / sv, sv)
+        if not north and n[1] > 0.5:
+            return "[-1 0 0 %g] %g" % (x1 / su, su), "[0 0 -1 %g] %g" % (top / sv, sv)
+        return vmf_lib.axes_for(n, 0.25)
+    return uv
+
+
+def njt(W, E):
+    top = VZ + T
+    # Lintel over the 20 ft opening in the Amtrak hall's east wall (the wall itself is split in amtrak()).
+    W(box(AX1, OY0, AZ + 12 * FT, AX1 + T, OY1, RZ + T, TEX_NJWALL))
+    W(box(AX1, OY0, AZ - T, AX1 + T, OY1, AZ, TEX_NJFLOOR))
+    # Shell: floor, end and side walls to the vault crown, side ceilings, vault ceiling.
+    W(box(NX0, NY0, AZ - T, NX1, NY1, AZ, TEX_NJFLOOR))
+    W(box(AX1, NY0 - T, AZ - T, NX1 + T, NY0, top, TEX_NJWALL))
+    W(box(AX1, NY1, AZ - T, NX1 + T, NY1 + T, top, TEX_NJWALL))
+    W(box(NX1, NY0, AZ - T, NX1 + T, NY1, top, TEX_NJWALL))
+    W(box(NX0, NY0, NC, NX1, VY0, top, TEX_CWHITE))
+    W(box(NX0, VY1, NC, NX1, NY1, top, TEX_CWHITE))
+    W(box(NX0, VY0, VZ, NX1, VY1, top, TEX_CWHITE))
+    # North wall: track gates (gold-framed doors, TRACK signs, screens) as one band.
+    vmf_lib.FACEUV[TEX_GATES] = band_uv(NX0, NX1, AZ + 150, 2400 / 2048, 150 / 128, True)
+    W(box(NX0, NY1 - 4, AZ, NX1, NY1, AZ + 150, TEX_GATES))
+    # South wall: NJ Transit ticket windows, a counter and glass.
+    tx0, tx1 = NX0 + 240, NX0 + 1200
+    vmf_lib.FACEUV[TEX_NJTIX] = band_uv(tx0, tx1, AZ + 120, 960 / 1024, 120 / 128, False)
+    W(box(tx0, NY0, AZ, tx1, NY0 + 4, AZ + 120, TEX_NJTIX))
+    W(box(tx0, NY0 + 4, AZ, tx1, NY0 + 30, AZ + 40, TEX_NJWALL))
+    W(box(tx0, NY0 + 28, AZ + 40, tx1, NY0 + 30, AZ + 90, TEX_GLASS))
+    W(box(tx1 + 120, NY0, AZ, NX1, NY0 + 4, AZ + 12 * FT, TEX_SHOP))
+    # White arched trusses every 10 ft under the vault, flared columns at its edges every 40 ft.
+    for x in range(NX0 + 60, NX1, 120):
+        E(ent("prop_static", (x, (VY0 + VY1) // 2, NC), model="models/pennmodern/njtruss.mdl", angles="0 90 0",
+              solid="0", disableshadows="1"))
+    for x in range(NX0 + 480, NX1, 480):
+        for y in (VY0, VY1):
+            E(ent("prop_static", (x, y, AZ), model="models/pennmodern/njcol.mdl", angles="0 0 0"))
+    # Lights: a row under each side ceiling, brighter under the vault.
+    for x in range(NX0 + 180, NX1, 360):
+        for y in (NY0 + 120, NY1 - 120):
+            E(ent("light", (x, y, NC - 20), _light="250 245 235 40"))
+        E(ent("light", (x, (VY0 + VY1) // 2, VZ - 40), _light="245 248 255 70"))
+    E(ent("env_cubemap", (NX0 + 600, -1440, AZ + 100)))
+    E(ent("env_cubemap", (NX1 - 600, -1440, AZ + 100)))
 
 
 def board_uv(x0, s=0.3515625):
@@ -391,6 +456,7 @@ def build():
     pylons(W)
     lirr(W, E)
     amtrak(W, E)
+    njt(W, E)
     props(E)
     ents += [
         ent("light_environment", (0, 0, H - 64), angles="-60 30 0", pitch="-60",

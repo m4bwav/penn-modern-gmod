@@ -31,3 +31,7 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-11-27] add | session 10: Amtrak concourse, 0.3.0
 - 7 Commons refs, amtrak-dimensions.md, amtrak(): hall one level above the LIRR, stair up through the LIRR south wall, halo columns (amcol.mdl), louvred unlit ceiling, departures board, ticket counters, waiting room (seats.mdl), escalator to a sealed track landing. 2143 verts, 8.0 MB, 146 fps, walk 10/10. Workshop 3846578407 updated, v0.3.0.
 - tvm.mdl: with yaw 90 its +y screen faced the wall and the origin on the wall face lit it black. A model's SMD +y face points -y in the world at yaw 90; keep prop origins off brush faces.
+## [2026-11-27] add | session 11: NJ Transit concourse, 0.4.0
+- 2 CC0 Commons refs, njt-dimensions.md, njt(): hall through the Amtrak east wall, diamond granite floor, trussed white vault on flared columns, track gates band, NJ Transit ticket windows. 2285 verts, 9.1 MB, 146 fps, walk 11/11.
+- A translucent VTF written by srctools needs VTFFlags.EIGHTBITALPHA or Source draws it opaque (DXT5 alpha alone is ignored). A $translucent brush with $envmap env_cubemap rendered white because cubemaps are never built.
+- njtruss.mdl: like the Moynihan trusses, a model spanning SMD y needs yaw 90 to span world y.

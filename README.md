@@ -4,11 +4,11 @@
 
 **Play it:** [Steam Workshop: Penn Station today (gm_penn_modern)](https://steamcommunity.com/sharedfiles/filedetails/?id=3846578407)
 
-A Garry's Mod map of today's New York Penn Station, built at true scale (1 ft = 12 units). Release 0.3.0 has three areas. Moynihan Train Hall is the 2021 hall in the old Farley post office across Eighth Avenue: a 31,000 sq ft room under a 92 ft glass skylight on gabled steel trusses, the four-faced clock, shop fronts under balconies on both sides, stairs up to the balconies, and two pairs of escalators down to the West End Concourse. From there a passage under Eighth Avenue leads into the LIRR concourse under Madison Square Garden, rebuilt in 2023: a 57 ft wide, 18 ft high corridor with wood-slat and lit white ceilings, white-and-blue columns carrying departure boards, ticket machines, and the 33rd Street entrance hall with its 40 ft lit ceiling grid and an escalator up toward the street. A stair from the LIRR corridor climbs to the old Amtrak main concourse one level up: a 240 x 150 ft hall under a louvred ceiling with round blue columns ringed by lights, a big departures board, ticket counters, a glazed waiting room with rows of seats, and an escalator down toward the tracks. The NJ Transit concourse, the platforms and the Eighth Avenue entrances come next (see the [plan](ai-docs/plans/penn-modern-plan.md)).
+A Garry's Mod map of today's New York Penn Station, built at true scale (1 ft = 12 units). Release 0.4.0 has four areas. Moynihan Train Hall is the 2021 hall in the old Farley post office across Eighth Avenue: a 31,000 sq ft room under a 92 ft glass skylight on gabled steel trusses, the four-faced clock, shop fronts under balconies on both sides, stairs up to the balconies, and two pairs of escalators down to the West End Concourse. From there a passage under Eighth Avenue leads into the LIRR concourse under Madison Square Garden, rebuilt in 2023: a 57 ft wide, 18 ft high corridor with wood-slat and lit white ceilings, white-and-blue columns carrying departure boards, ticket machines, and the 33rd Street entrance hall with its 40 ft lit ceiling grid and an escalator up toward the street. A stair from the LIRR corridor climbs to the old Amtrak main concourse one level up: a 240 x 150 ft hall under a louvred ceiling with round blue columns ringed by lights, a big departures board, ticket counters, a glazed waiting room with rows of seats, and an escalator down toward the tracks. Through the Amtrak hall's east wall is the NJ Transit concourse: a long hall on the same level with a diamond pink-and-grey granite floor, cream marble walls, white arched trusses under a raised vault down its middle on flared columns, track gates along the north wall and the NJ Transit ticket windows on the south wall. The platforms and the Eighth Avenue entrances come next (see the [plan](ai-docs/plans/penn-modern-plan.md)).
 
-The map is written as VMF text by a Python script, not drawn in Hammer. The textures (floor, stone, shop fronts, LED boards, skylight glass) and the models (trusses, skylight, clock, escalators, departure boards, ticket machines, Amtrak columns, seats) are made by scripts in `tools/`.
+The map is written as VMF text by a Python script, not drawn in Hammer. The textures (floor, stone, shop fronts, LED boards, skylight glass) and the models (trusses, skylight, clock, escalators, departure boards, ticket machines, Amtrak columns, seats, NJ Transit trusses and columns) are made by scripts in `tools/`.
 
-Screenshots from release 0.3.0:
+Screenshots from release 0.4.0:
 
 | | |
 |---|---|
@@ -19,6 +19,8 @@ Screenshots from release 0.3.0:
 | ![Passage under Eighth Avenue](docs/passage.jpg) | ![LIRR concourse looking west](docs/lirr_east.jpg) |
 | ![LIRR ticket machines](docs/tvm.jpg) | ![Amtrak concourse](docs/amtrak_north.jpg) |
 | ![Amtrak departures board](docs/amtrak_board.jpg) | ![Amtrak escalator atrium](docs/amtrak_esc.jpg) |
+| ![NJ Transit concourse](docs/njt_west.jpg) | ![NJ Transit track gates](docs/njt_gates.jpg) |
+| ![NJ Transit vault](docs/njt_vault.jpg) | ![NJ Transit ticket windows](docs/njt_tickets.jpg) |
 
 ### Level map
 

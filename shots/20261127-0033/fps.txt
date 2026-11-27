@@ -1,0 +1,5 @@
+amtrak_board    147 fps
+njt_west        147 fps
+njt_vault       146 fps
+njt_gates       146 fps
+njt_tickets     146 fps

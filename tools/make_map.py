@@ -24,6 +24,9 @@ for blk in re.split(r"(?m)^\s*solid$", txt)[1:]:
     r = (min(xs), min(ys), max(xs), max(ys))
     if any("playerclip" in t for t in tex):
         clip.append(r)
+    elif r[0] >= 4880 and r[3] <= -1000:   # NJ Transit concourse: its vault reaches street level, so judge it by its own floor
+        if min(zs) <= -20 * FT + 48 <= max(zs):
+            amtrak.append(r)
     elif min(zs) <= 48 <= max(zs) and max(zs) - min(zs) < 2000 or min(zs) <= 48 < max(zs) and (r[2] - r[0] < 200 or r[3] - r[1] < 200):
         hall.append(r)
     elif min(zs) <= -30 * FT + 48 <= max(zs):
@@ -54,9 +57,10 @@ for lbl, x, y in (("Moynihan Train Hall", 0, 520), ("Escalators down", 0, 0), ("
                   ("Side hall and shops (balcony over)", 300, -800), ("Side hall and shops", 300, 800),
                   ("West End Concourse below (blue)", 0, -420), ("Under Eighth Avenue", 1620, 330), ("LIRR concourse (blue)", 3000, 250),
                   ("33rd St pavilion, escalator up", 4800, -500), ("Amtrak concourse (green)", 3440, -1100),
-                  ("Stair up from LIRR", 3024, -540), ("Waiting room", 2360, -2230), ("Escalator to tracks", 4036, -1760)):
+                  ("Stair up from LIRR", 3024, -540), ("Waiting room", 2360, -2230), ("Escalator to tracks", 4036, -1760),
+                  ("NJ Transit concourse (green)", 6150, -1440), ("Track gates", 6150, -1000)):
     cx, cy = P(x, y); w = d.textlength(lbl, font=f); d.rectangle((cx-w/2-6, cy-16, cx+w/2+6, cy+14), fill=(255, 255, 255)); d.text((cx-w/2, cy-13), lbl, fill=(30, 30, 30), font=f)
 d.text((60, 30), "gm_penn_modern: rough plan", fill=(30, 30, 30), font=fb)
-d.text((60, 78), f"dark = hall level at chest height, green = Amtrak 20 ft below, blue = concourses 30 ft below, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
+d.text((60, 78), f"dark = hall level at chest height, green = Amtrak and NJ Transit 20 ft below, blue = concourses 30 ft below, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
 d.text((60, H-45), "Generated from src/gm_penn_modern.vmf by tools/make_map.py", fill=(120, 120, 120), font=f)
 OUT.parent.mkdir(parents=True, exist_ok=True); img.save(OUT); print("wrote", OUT, len(hall), len(lower), len(clip))
