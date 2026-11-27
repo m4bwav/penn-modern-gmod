@@ -1,0 +1,6 @@
+hall_west       146 fps
+hall_up         146 fps
+hall_east       146 fps
+wells           145 fps
+side_south      147 fps
+lower           146 fps
