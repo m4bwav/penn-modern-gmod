@@ -1,10 +1,10 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-26 (session 0, setup)
+Updated: 2026-11-26 (session 1)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
-- Chain: session 0 of 40 (setup done 2026-11-26; the driver's first session is session 1)
+- Chain: session 1 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
 - Workshop ID: none yet. First upload creates a new item (gmpublish create); record the ID here and in tools/package.sh.
@@ -16,10 +16,11 @@ Updated: 2026-11-26 (session 0, setup)
 
 ## Done
 - Setup (session 0): private repo m4bwav/penn-modern-gmod, ai-docs, plan, tooling copied from penn-gmod with names moved off penn-gmod's (gm_penn_modern, pennmodern, pm_*), shared GMod lock (tools/gmod_lock.sh, also merged into penn-gmod as PR #9), starter build_vmf.py (sealed placeholder Moynihan box, PLACEHOLDER sizes, stock dev textures), three starter cameras. Not compiled yet. pm_models.py and pm_textures.py still hold the 1910 column and travertine content as patterns; replace them.
+- Session 1: 15 Commons refs of Moynihan (8 CC0, rest CC BY / BY-SA) in refs/photos, logged in refs/SOURCES.md; fetch_refs.py now writes the 6-column table and refuses NC/ND. Dimensions in ai-docs/notes/moynihan-dimensions.md (cited: 31,000 sq ft concourse, 92 ft skylight, 12 ft clock, 20 ft balcony; derived: 200 x 155 ft plan, 3 transverse trusses / 4 bays, springing ~50 ft). build_vmf.py box sized to that. First full compile (FAST) loads: vbspinfo verts 141, faces 112, brushes 6, BSP 1.0 MB; shots/20261126-2139 hall_west/up/east all 146 fps. compile.sh tolerates an empty materials folder.
 
 ## Next
-1. Session 1: Commons refs for Moynihan Train Hall (CC0/PD/CC BY/BY-SA) into refs/ + SOURCES.md; sourced dimensions in notes/; first full compile under the lock, shots, vbspinfo.
-2. Then Moynihan blockout with real sizes, skylight trusses as MDL, detail, lighting, 0.1.0 to a new Workshop item.
+1. Session 2: Moynihan blockout: floor with escalator wells to a stub West End Concourse, two-storey side halls with the 20 ft balcony, wall band to ~50 ft, skylight (texture) with the 3 transverse trusses + secondary trusses as MDL in pm_models.py (replace the 1910 corinthian content; it still builds corinthian.mdl), clock MDL at the centre. Full compile, shots, vbspinfo.
+2. Then detail against refs with compare.jpg, lighting, 0.1.0 to a new Workshop item (gmpublish create).
 
 ## Waiting on Mark
 - Nothing.

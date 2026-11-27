@@ -5,3 +5,5 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-11-26] init | scaffolded
 - 2026-11-26 Setup: repo, ai-docs, plan, tooling from penn-gmod renamed to gm_penn_modern / pennmodern / pm_*, shared GMod lock (tools/gmod_lock.sh; penn-gmod PR #9), starter Moynihan box, 40-session continue prompt, driver launched (PID in HANDOFF Grants).
 ## [2026-11-26] index | rebuilt (2 entries)
+## [2026-11-26] add | session 1: Moynihan refs, dimensions, first compile
+- 15 Commons refs (refs/SOURCES.md), notes/moynihan-dimensions.md, box sized 200x155x92 ft, compile loads (141 verts), shots 146 fps. The GMod lock waited out penn-gmod's shots without trouble.

@@ -14,9 +14,9 @@ FT = 12
 OUT = Path(__file__).resolve().parent.parent / "src" / "gm_penn_modern.vmf"
 
 # Moynihan Train Hall, inside the Farley Building's former mail-sorting room. Long axis = x
-# (east-west, +x toward Eighth Avenue and Penn Station across it). PLACEHOLDER sizes until measured.
-HX, HY = 255 * FT // 2, 92 * FT // 2      # PLACEHOLDER hall plan
-H = 92 * FT                               # PLACEHOLDER skylight crown height
+# (east-west, +x toward Eighth Avenue and Penn Station across it). Sizes: ai-docs/notes/moynihan-dimensions.md.
+HX, HY = 200 * FT // 2, 155 * FT // 2     # 200 x 155 ft = 31,000 sq ft (ai-docs/notes/moynihan-dimensions.md)
+H = 92 * FT                               # skylight 92 ft (cited)
 T = 64                                    # shell thickness
 TEX_FLOOR = "dev/dev_measuregeneric01b"
 TEX_WALL = "dev/dev_measurewall01a"
