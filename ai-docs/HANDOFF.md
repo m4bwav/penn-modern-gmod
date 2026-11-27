@@ -1,10 +1,10 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-26 (session 5)
+Updated: 2026-11-26 (session 6)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
-- Chain: session 5 of 40
+- Chain: session 6 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
 - Workshop ID: none yet. First upload creates a new item (gmpublish create); record the ID here and in tools/package.sh.
@@ -24,9 +24,11 @@ Updated: 2026-11-26 (session 5)
 
 - Session 5 (branch s5-lighting): lighting pass (env_tonemap_controller + logic_auto: exposure 0.5-1.2, bloom 0.2; sun 300 to 220, ambient 60 to 35, hall fill 80 to 40), six warm 2700K-ish downlights per balcony, a 6 ft stair at the west end of each side hall up to the balcony through a slab opening with a glass rail, four black departure pylons with a lit band at the well ends. Shots cameras: side_south moved out of the stair, new "stair" cam. Full compile: vertexes 1227, faces 890, brushes 109, BSP 4.4 MB; shots/20261126-2309 all 146-147 fps.
 
+- Session 6 (branch s6-escalators): escalator.mdl (pm_models.py: a pair of 40 in escalators per well, 8 in risers, stainless decks and cladding, glass balustrades, black handrails) placed yaw 90 / 270; the ramp wedges are now tools/toolsplayerclip so players still walk them. Pylon heads got a pylon_screen texture (amber TRACKS, white 11 12, pylon_uv in build_vmf.py; pylons moved to x = +-450 so the texture starts on the face edge). Storefront texture evened out (fbm 0.5 to 0.12, shelving shade per bay). Full compile: vertexes 1224, faces 888, brushes 113, BSP 4.7 MB; shots/20261126-2314 all 146 fps.
+
 ## Next
-1. Session 6: real escalator MDLs in the wells (replace the ramp wedges, keep a clip ramp for walking), storefront texture less blotchy, pylon screen texture (track numbers), check the stair in game for walkability (16 u treads, 12 u risers).
-2. Then 0.1.0 to a new Workshop item (gmpublish create), licence audit and public repo.
+1. Session 7: walk the balcony stairs and escalator clips in game (noclip off; 16 u treads, 12 u risers), then cut 0.1.0: README with a ComfyUI banner (no Krea 2), level map, licence audit of refs/ and every asset, LICENSE, SECURITY.md, wiki, tag and release, first Workshop upload as a NEW item (gmpublish create), record the ID here and in tools/package.sh, make the repo public.
+2. Then area 2: the LIRR concourse (2021 rebuild) refs and blockout, joined to the West End Concourse stub.
 
 ## Waiting on Mark
 - Nothing.

@@ -17,3 +17,5 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - 2026-11-26 driver pass 4 (meant as session 5) saw the driver PID alive and skipped as 'already handled'; a driver-started session must do the item. Pass 5 is doing session 5.
 ## [2026-11-26] add | session 5: lighting, balcony stairs, pylons
 - Tonemap controller, softer sun, warm balcony downlights, west-end stairs, departure pylons. 1227 verts, 146 fps.
+## [2026-11-26] add | session 6: escalator models, pylon screens
+- escalator.mdl pairs in both wells over playerclip ramps, TRACKS 11 12 pylon screens, calmer storefront. 1224 verts, 146 fps. Stair walk test not done yet (no in-game walk tool used).

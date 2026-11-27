@@ -98,7 +98,9 @@ save(img, "trim_dark", surf="metal")
 # Storefront: warm lit shops behind glass, 2 bays per tile with mullions and a dark fascia band.
 img = np.zeros((N, N, 3))
 img[:] = [214, 190, 150]
-img *= (0.75 + 0.5 * fbm(N, 4)[..., None] + 0.25 * (yy / N)[..., None])
+img *= (0.88 + 0.12 * fbm(N, 3)[..., None] + 0.12 * (yy / N)[..., None])   # even shop glow, no blotches
+for k in (N // 4, 3 * N // 4):
+    img[N // 3:N - 40, k - 50:k + 50] *= 0.86   # shelving shadow in each bay
 img[: N // 6] = [40, 42, 46]                               # fascia
 img[N // 6: N // 6 + 6] = [235, 220, 190]                  # cove light strip
 for k in (0, N // 2):
@@ -152,3 +154,13 @@ for name, text in (("board_name", "MOYNIHAN\nTRAIN HALL"), ("board_info", "Ticke
     dr.multiline_text((W2 / 2, N / 2), text, font=f, fill=(240, 240, 245), anchor="mm", align="center", spacing=20)
     save(np.asarray(im, float), name, '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
          '\t"$selfillum" "1"\n}\n', surf="glass")
+
+# Pylon screen: black departure pylon head, amber "TRACKS" over white track numbers.
+img = np.zeros((256, 256, 3)) + [14, 15, 18]
+im = Image.fromarray(img.astype(np.uint8))
+dr = ImageDraw.Draw(im)
+dr.rectangle((6, 6, 249, 249), outline=(60, 62, 66), width=4)
+dr.text((128, 70), "TRACKS", font=font(40), fill=(255, 176, 40), anchor="mm")
+dr.text((128, 160), "11  12", font=font(84), fill=(245, 245, 245), anchor="mm")
+save(np.asarray(im, float), "pylon_screen", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$selfillum" "1"\n}\n', surf="glass")

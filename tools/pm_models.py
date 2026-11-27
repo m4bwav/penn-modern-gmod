@@ -26,6 +26,14 @@ LONG = 200 * FT          # hall length E-W (build_vmf.py 2*HX)
 VMTS = {
     "steel": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.42 0.44 0.47]"\n'
              '\t"$surfaceprop" "metal"\n}\n',
+    "stainless": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.78 0.79 0.8]"\n'
+                 '\t"$surfaceprop" "metal"\n}\n',
+    "steptread": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.3 0.31 0.32]"\n'
+                 '\t"$surfaceprop" "metal"\n}\n',
+    "rubber": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.05 0.05 0.05]"\n'
+              '\t"$surfaceprop" "rubber"\n}\n',
+    "escglass": '"VertexLitGeneric"\n{\n\t"$basetexture" "glass/glasswindow007a"\n\t"$translucent" "1"\n'
+                '\t"$nocull" "1"\n\t"$surfaceprop" "glass"\n}\n',
     "clockcase": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.12 0.12 0.13]"\n'
                  '\t"$surfaceprop" "metal"\n}\n',
 }
@@ -165,7 +173,40 @@ def skylight():
     return m
 
 
-MODELS = {"truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
+ESC_RUN, ESC_RISE = 56 * FT, 30 * FT   # build_vmf.py: wells run 2*WX, down to LZ
+
+
+def escalator():
+    """A pair of escalators side by side in one 12 ft well, climbing toward +x: steps on a
+    stainless truss, glass balustrades with black handrails. Origin: top end at the hall floor
+    (z 0, x = +ESC_RUN/2), bottom end at x = -ESC_RUN/2, z = -ESC_RISE; spans y = -63..63."""
+    m = Mesh()
+    L, R = ESC_RUN / 2, ESC_RISE
+    z = lambda x: (x + L) * R / ESC_RUN - R
+    n = R // 8                                    # 8 u (8 in) risers
+    d = ESC_RUN / n
+    for yc in (-33, 33):
+        a, b = yc - 20, yc + 20                   # 40 in step width
+        for i in range(n):
+            x0 = -L + i * d
+            _box(m, "steptread", x0, a, -R + i * 8 - 2, x0 + d, b, -R + (i + 1) * 8)
+        for y0, y1 in ((a - 10, a), (b, b + 10)):     # inner deck and skirt on each side, sloped
+            pts = [(-L, z(-L) - 30), (L, z(L) - 30), (L, z(L) + 6), (-L, z(-L) + 6)]
+            m.quad("stainless", *[((x, y0, zz), (0, -1, 0), (x / 96, zz / 96)) for x, zz in pts])
+            m.quad("stainless", *[((x, y1, zz), (0, 1, 0), (x / 96, zz / 96)) for x, zz in pts[::-1]])
+            m.quad("stainless", ((-L, y0, z(-L) + 6), (0, 0, 1), (0, 0)), ((L, y0, z(L) + 6), (0, 0, 1), (1, 0)),
+                   ((L, y1, z(L) + 6), (0, 0, 1), (1, 1)), ((-L, y1, z(-L) + 6), (0, 0, 1), (0, 1)))
+            ym = (y0 + y1) / 2
+            m.quad("escglass", *[((x, ym, zz), (0, 1, 0), (x / 96, zz / 96)) for x, zz in
+                                 ((-L, z(-L) + 6), (L, z(L) + 6), (L, z(L) + 36), (-L, z(-L) + 36))])
+            m.tube("rubber", (-L - 12, ym, z(-L) + 38), (L + 12, ym, z(L) + 38), 2.5, 2.5, 6)
+        # cladding under the run, seen from the concourse below
+        m.quad("stainless", ((-L, b + 10, z(-L) - 30), (0, 0, -1), (0, 0)), ((-L, a - 10, z(-L) - 30), (0, 0, -1), (1, 0)),
+               ((L, a - 10, z(L) - 30), (0, 0, -1), (1, 1)), ((L, b + 10, z(L) - 30), (0, 0, -1), (0, 1)))
+    return m
+
+
+MODELS = {"escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
 
 
 def build():

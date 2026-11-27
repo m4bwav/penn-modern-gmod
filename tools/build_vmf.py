@@ -34,11 +34,12 @@ TEX_FLOOR = "pennmodern/floor_marble"     # tools/pm_textures.py
 TEX_WALL = "pennmodern/wall_stone"
 TEX_TRIM = "pennmodern/trim_dark"
 TEX_SHOP = "pennmodern/storefront"
+TEX_PYLON = "pennmodern/pylon_screen"     # 256 x 256 mapped once onto the pylon's 36 u screen
 BOARDS = ("pennmodern/board_name", "pennmodern/board_info")
 # Board textures are 1024 x 512 mapped once onto a 30 x 15 ft face (360 x 180 u): faces start on
 # multiples of 360 in x and 180 in z so the texture origin lines up.
 vmf_lib.SCALE.update({TEX_FLOOR: 0.375, TEX_WALL: 0.5, TEX_TRIM: 0.25, TEX_SHOP: 0.375,
-                      BOARDS[0]: 0.3515625, BOARDS[1]: 0.3515625})
+                      BOARDS[0]: 0.3515625, BOARDS[1]: 0.3515625, TEX_PYLON: 0.140625})
 TEX_GLASS = "glass/glasswindow007a"
 STW, STL = 6 * FT, 22 * 16                # balcony stair: 6 ft wide, 22 risers of 12 u on 16 u treads
 TEX_SKY = "tools/toolsskybox"
@@ -75,7 +76,7 @@ def lower(W):
     # the north well east to west, so both ends of the hall reach the concourse.
     for (y0, y1), up_east in zip(WELLS, (True, False)):
         poly = [(-WX, LZ), (WX, LZ), (WX, 0)] if up_east else [(-WX, LZ), (WX, LZ), (-WX, 0)]
-        W(yprism(poly, y0, y1, TEX_TRIM))
+        W(yprism(poly, y0, y1, "tools/toolsplayerclip"))   # walkable clip under escalator.mdl
 
 
 def board_uv(x0, s=0.3515625):
@@ -132,15 +133,31 @@ def side_halls(W, E):
         E(ent("light", (0, sgn * (HY - 4 * FT), BALC + 8 * FT), _light="255 240 215 80"))
 
 
+def pylon_uv(n, s=0.140625):
+    # One 256 texel screen per 36 u face, read left to right, top edge at 8 ft + 36 u.
+    if abs(n[1]) > 0.5:
+        u = "[%d 0 0 0] %g" % (-1 if n[1] > 0 else 1, s)
+    else:
+        u = "[0 %d 0 0] %g" % (1 if n[0] > 0 else -1, s)
+    return u, "[0 0 -1 %g] %g" % ((8 * FT + 36) / s, s)
+
+
 def pylons(W):
     # Freestanding black departure pylons at the well ends (the 11/12 track signs), lit screen band on top.
-    for x in (-WX - 10 * FT, WX + 10 * FT):
+    # x - 18 on a multiple of 36 so pylon_uv starts the screen texture on the face's left edge.
+    vmf_lib.FACEUV[TEX_PYLON] = pylon_uv
+    for x in (-450, 450):
         for y in (-20 * FT, 20 * FT):
             W(box(x - 18, y - 9, 0, x + 18, y + 9, 8 * FT, TEX_TRIM))
-            W(box(x - 18, y - 10, 8 * FT, x + 18, y + 10, 11 * FT, TEX_SHOP))
+            W(box(x - 18, y - 10, 8 * FT, x + 18, y + 10, 8 * FT + 36, TEX_PYLON))
+            W(box(x - 18, y - 9, 8 * FT + 36, x + 18, y + 9, 8 * FT + 42, TEX_TRIM))
 
 
 def props(E):
+    # Escalators: yaw 90 keeps SMD axes = world axes (+x up), yaw 270 climbs toward -x.
+    for (y0, y1), yaw in zip(WELLS, (90, 270)):
+        E(ent("prop_static", (0, (y0 + y1) // 2, 0), model="models/pennmodern/escalator.mdl", angles="0 %d 0" % yaw,
+              solid="0", disableshadows="1"))
     # studiomdl turns SMD +x to the prop's +y: yaw 90 puts the trusses across the hall (N-S).
     for x in TRUSS_X:
         E(ent("prop_static", (x, 0, SPRING), model="models/pennmodern/truss.mdl", angles="0 90 0", solid="0",
