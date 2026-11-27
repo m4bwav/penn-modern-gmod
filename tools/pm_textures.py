@@ -361,3 +361,73 @@ save(np.asarray(im, float), "njt_tickets", UL)
 save(np.zeros((64, 64, 3)) + [150, 175, 180], "glass_clean",
      '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n\t"$translucent" "1"\n}\n',
      surf="glass", alpha=np.full((64, 64), 28))
+
+# --- Area 5, the platforms (refs: Track_21_New_York_Penn_Station.jpg, Track_16_Penn_Station_New_York_during_COVID_pandemic.jpg,
+# Amtrak_and_LIRR_trains_at_Penn_Station_tracks_January_6_2024.jpg, NJ_Transit_MultiLevel_Coach_7051_SB_at_Secaucus_Junction.jpg) ---
+# Platform deck: worn red-grey painted concrete with scuffs and slab joints.
+img = np.zeros((N, N, 3)) + [128, 104, 100]
+img *= (1 + fbm(N, 6) * 0.14)[..., None]
+img[((yy % 256) < 2) | ((xx % 256) < 2)] *= 0.7
+save(img, "plat_floor")
+
+# Platform edge: yellow tactile strip, rows of raised domes.
+img = np.zeros((N, N, 3)) + [214, 172, 30]
+img *= (1 + fbm(N, 4) * 0.08)[..., None]
+img[((xx % 32) - 16) ** 2 + ((yy % 32) - 16) ** 2 < 49] *= 1.12
+img[((xx % 32) - 14) ** 2 + ((yy % 32) - 18) ** 2 < 9] *= 0.8
+save(img, "plat_edge")
+
+# Trackbed: dark ballast stones with grime and the odd rusty tie between them.
+img = np.zeros((N, N, 3)) + [70, 66, 62]
+img *= (1 + (rng.random((N, N)) - .5) * 0.5)[..., None]
+img *= (1 + fbm(N, 5) * 0.3)[..., None]
+img[(xx % 64) < 20] = img[(xx % 64) < 20] * [0.7, 0.55, 0.45]
+save(img, "ballast", surf="gravel")
+
+# Track walls: grimy grey concrete in tall pours with drip stains.
+img = np.zeros((N, N, 3)) + [96, 94, 88]
+img *= (1 + fbm(N, 6) * 0.2)[..., None]
+img *= (1 - np.clip(fbm(N, 3), 0, 1) * (yy / N) * 0.6)[..., None]
+img[(xx % 256) < 3] *= 0.6
+save(img, "tunnel_wall", surf="concrete")
+
+# Platform ceiling: dark concrete slab with deep beams every 128 texels and a pipe run.
+img = np.zeros((N, N, 3)) + [74, 70, 64]
+img *= (1 + fbm(N, 5) * 0.18)[..., None]
+img[(xx % 128) < 18] *= 0.55
+img[((yy % 256) > 120) & ((yy % 256) < 136)] = [150, 140, 120]
+save(img, "plat_ceil", surf="concrete")
+
+# Platform columns: tan paint over a blue dado with a red band, as on tracks 16 and 21.
+img = np.zeros((N, N, 3)) + [196, 166, 110]
+img *= (1 + fbm(N, 5) * 0.08)[..., None]
+img[yy > N - 120] = [52, 80, 140]
+img[(yy > N - 132) & (yy <= N - 120)] = [150, 30, 30]
+save(img, "plat_col", surf="concrete")
+
+VLG = UNLIT.replace("UnlitGeneric", "VertexLitGeneric")
+# MultiLevel coach side (model): stainless, a lower and upper window band, doors, NJ Transit stripes.
+im = Image.new("RGB", (1024, 256), (178, 182, 188))
+dr = ImageDraw.Draw(im)
+for x in range(0, 1024, 4):
+    dr.line((x, 0, x, 255), fill=(170 + (x // 4) % 3 * 6,) * 3)
+dr.rectangle((0, 168, 1023, 180), fill=(230, 110, 30))
+dr.rectangle((0, 181, 1023, 188), fill=(110, 40, 130))
+dr.rectangle((0, 189, 1023, 196), fill=(20, 60, 150))
+for x in range(150, 870, 46):
+    dr.rounded_rectangle((x, 46, x + 36, 82), 5, fill=(28, 34, 40))
+    dr.rounded_rectangle((x, 112, x + 36, 150), 5, fill=(28, 34, 40))
+for x in (60, 904):
+    dr.rectangle((x, 100, x + 60, 228), fill=(120, 124, 130))
+    dr.rectangle((x + 4, 104, x + 28, 228), fill=(150, 154, 160))
+    dr.rectangle((x + 32, 104, x + 56, 228), fill=(150, 154, 160))
+    dr.rectangle((x + 8, 120, x + 24, 160), fill=(28, 34, 40))
+    dr.rectangle((x + 36, 120, x + 52, 160), fill=(28, 34, 40))
+save(np.asarray(im, float), "mlside", VLG, surf="metal", model=True)
+
+# MultiLevel coach end (model): stainless with a diaphragm door.
+im = Image.new("RGB", (128, 256), (170, 174, 180))
+dr = ImageDraw.Draw(im)
+dr.rectangle((30, 60, 98, 230), fill=(30, 30, 32))
+dr.rectangle((40, 80, 88, 140), fill=(60, 66, 72))
+save(np.asarray(im, float), "mlend", VLG, surf="metal", model=True)

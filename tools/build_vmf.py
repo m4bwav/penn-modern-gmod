@@ -93,6 +93,23 @@ TEX_NJWALL = "pennmodern/wall_njt"
 TEX_GATES = "pennmodern/trackgates"       # 2048 x 128, mapped once onto the north wall, 200 x 12.5 ft
 TEX_NJTIX = "pennmodern/njt_tickets"      # 1024 x 128, mapped once onto an 80 x 10 ft counter front
 vmf_lib.SCALE.update({TEX_NJFLOOR: 0.25, TEX_NJWALL: 0.375})
+# Area 5, the platforms: one island platform between two tracks under the Amtrak and NJ Transit halls,
+# 30 ft below them (the Amtrak escalator lands on it). Sizes: ai-docs/notes/platform-dimensions.md.
+QZ = AZ - 30 * FT                         # platform top
+RAIL = QZ - 48                            # top of rail, 48 in below a high-level platform (cited)
+QX0, QX1 = 2400, NX1                      # 412 ft modelled; the tracks run on into black tunnel mouths
+QY0, QY1 = -1776, -1392                   # 32 ft island platform (derived)
+TW = 144                                  # 12 ft trackway each side
+QC = AZ - T                               # ceiling = underside of the concourse floors
+JX0, JX1, JY0, JY1 = 6560, 7040, -1760, -1640   # 10 ft stair from the NJ Transit floor, 30 risers
+TEX_QFLOOR = "pennmodern/plat_floor"
+TEX_QEDGE = "pennmodern/plat_edge"
+TEX_BALLAST = "pennmodern/ballast"
+TEX_TUNNEL = "pennmodern/tunnel_wall"
+TEX_QCEIL = "pennmodern/plat_ceil"
+TEX_QCOL = "pennmodern/plat_col"
+vmf_lib.SCALE.update({TEX_QFLOOR: 0.375, TEX_QEDGE: 0.125, TEX_BALLAST: 0.25, TEX_TUNNEL: 0.5, TEX_QCEIL: 0.5,
+                      TEX_QCOL: 0.25})
 
 
 def hall(W):
@@ -258,14 +275,8 @@ def amtrak(W, E):
     for x0, y0, x1, y1 in ((AX0, AY0, RX0, AY1), (RX1, AY0, AX1, AY1), (RX0, AY0, RX1, RY0), (RX0, RY1, RX1, AY1)):
         W(box(x0, y0, AC, x1, y1, top, TEX_CAM))
     W(box(RX0, RY0, RZ, RX1, RY1, top, TEX_CWHITE))
-    # Escalator down toward the tracks: sealed landing 30 ft below until area 5 adds the platforms.
+    # Escalator down to the island platform 30 ft below (platforms()).
     lz = AZ - 30 * FT
-    lx0, ly0, ly1 = EX0 - 240, EYC - 140, EYC + 140
-    W(box(lx0 - T, ly0 - T, lz - T, EX1 + T, ly1 + T, lz, TEX_GRANITE))
-    W(box(lx0 - T, ly0 - T, lz, lx0, ly1 + T, AZ - T, TEX_WWHITE))
-    W(box(EX1, ly0 - T, lz, EX1 + T, ly1 + T, AZ - T, TEX_WWHITE))
-    W(box(lx0, ly0 - T, lz, EX1, ly0, AZ - T, TEX_WWHITE))
-    W(box(lx0, ly1, lz, EX1, ly1 + T, AZ - T, TEX_WWHITE))
     W(yprism([(EX0, lz), (EX1, lz), (EX1, AZ)], EYC - 63, EYC + 63, "tools/toolsplayerclip"))
     E(ent("prop_static", ((EX0 + EX1) // 2, EYC, AZ), model="models/pennmodern/escalator.mdl", angles="0 90 0",
           solid="0", disableshadows="1"))
@@ -299,10 +310,61 @@ def amtrak(W, E):
         for y in range(AY1 - 180, AY0, -360):
             atrium = RX0 < x < RX1 and RY0 < y < RY1
             E(ent("light", (x, y, (RZ if atrium else AC) - 20), _light="250 245 235 %d" % (70 if atrium else 45)))
-    E(ent("light", ((lx0 + EX1) // 2, EYC, lz + 120), _light="240 240 235 50"))
     E(ent("light", ((SX0 + SX1) // 2, py0 - 100, -150), _light="240 240 235 30"))
     E(ent("env_cubemap", (3000, -1300, AZ + 100)))
     E(ent("env_cubemap", (4200, -1800, AZ + 100)))
+
+
+def platforms(W, E):
+    ty0, ty1 = QY0 - TW, QY1 + TW          # trackway edges
+    bed = RAIL - 12                         # ballast top, rails 12 u tall on it
+    # Shell: side walls and tunnel-black end walls from below the ballast to the concourse floors.
+    W(box(QX0 - T, ty0 - T, bed - T, QX1 + T, ty0, QC, TEX_TUNNEL))
+    W(box(QX0 - T, ty1, bed - T, QX1 + T, ty1 + T, QC, TEX_TUNNEL))
+    W(box(QX0 - T, ty0, bed - T, QX0, ty1, QC, "tools/toolsblack"))
+    W(box(QX1, ty0, bed - T, QX1 + T, ty1, QC, "tools/toolsblack"))
+    W(box(QX0, ty0, bed - T, QX1, ty1, bed, TEX_BALLAST))
+    # Ceiling slab under the Amtrak and NJ Transit floors, open over the escalator well and the stair.
+    cz = QC - 16
+    wy0, wy1 = EYC - 72, EYC + 72
+    holes = ((EX0, EX1, wy0, wy1), (JX0, JX1, JY0, JY1))
+    xs = [QX0, EX0, EX1, JX0, JX1, QX1]
+    for xa, xb in zip(xs, xs[1:]):
+        hole = next((h for h in holes if h[0] == xa), None)
+        if not hole:
+            W(box(xa, ty0, cz, xb, ty1, QC, TEX_QCEIL))
+        else:
+            W(box(xa, ty0, cz, xb, hole[2], QC, TEX_QCEIL))
+            W(box(xa, hole[3], cz, xb, ty1, QC, TEX_QCEIL))
+    # Island platform: concrete deck with a yellow tactile strip along both edges.
+    W(box(QX0, QY0 + 24, bed, QX1, QY1 - 24, QZ, TEX_QFLOOR))
+    W(box(QX0, QY0, bed, QX1, QY0 + 24, QZ, TEX_QEDGE))
+    W(box(QX0, QY1 - 24, bed, QX1, QY1, QZ, TEX_QEDGE))
+    # Rails: two per track, 56.5 in gauge (cited), on the ballast.
+    for yc in ((ty0 + QY0) // 2, (QY1 + ty1) // 2):
+        for d in (-29, 26):
+            W(box(QX0, yc + d, bed, QX1, yc + d + 3, RAIL, TEX_TRIM))
+    # NJ Transit stair: 30 risers of 12 u on 16 u treads, climbing east to the concourse floor.
+    for i in range(30):
+        W(box(JX0 + 16 * i, JY0, QZ, JX0 + 16 * (i + 1), JY1, QZ + 12 * (i + 1), TEX_GRANITE))
+    W(box(JX0 - 2, JY0 - 4, QZ, JX1, JY0, AZ, TEX_GLASS))
+    W(box(JX0 - 2, JY1, QZ, JX1, JY1 + 4, AZ, TEX_GLASS))
+    # Square columns down the middle of the platform every 30 ft, clear of the escalator and stair.
+    for x in range(QX0 + 180, QX1, 360):
+        if not (EX0 - 120 < x < EX1 + 60 or JX0 - 120 < x < JX1 + 60):
+            W(box(x - 16, EYC - 16, QZ, x + 16, EYC + 16, cz, TEX_QCOL))
+    # A multilevel train on the north track (pmcar.mdl, 85 ft cars; yaw 90 runs SMD x along world x).
+    for k in range(4):
+        E(ent("prop_static", (2900 + 515 + 1032 * k, (QY1 + ty1) // 2, RAIL), model="models/pennmodern/pmcar.mdl",
+              angles="0 90 0", disableshadows="1"))
+    # Lights: a dim fluorescent row over the platform, a few over each track.
+    for x in range(QX0 + 120, QX1, 240):
+        E(ent("light", (x, EYC + 100, cz - 24), _light="245 240 220 28"))
+    for x in range(QX0 + 480, QX1, 960):
+        for y in ((ty0 + QY0) // 2, (QY1 + ty1) // 2):
+            E(ent("light", (x, y, cz - 24), _light="240 225 190 20"))
+    E(ent("env_cubemap", (3000, EYC, QZ + 80)))
+    E(ent("env_cubemap", (6000, EYC, QZ + 80)))
 
 
 def band_uv(x0, x1, top, su, sv, north):
@@ -323,7 +385,13 @@ def njt(W, E):
     W(box(AX1, OY0, AZ + 12 * FT, AX1 + T, OY1, RZ + T, TEX_NJWALL))
     W(box(AX1, OY0, AZ - T, AX1 + T, OY1, AZ, TEX_NJFLOOR))
     # Shell: floor, end and side walls to the vault crown, side ceilings, vault ceiling.
-    W(box(NX0, NY0, AZ - T, NX1, NY1, AZ, TEX_NJFLOOR))
+    W(box(NX0, NY0, AZ - T, JX0, NY1, AZ, TEX_NJFLOOR))
+    W(box(JX1, NY0, AZ - T, NX1, NY1, AZ, TEX_NJFLOOR))
+    W(box(JX0, NY0, AZ - T, JX1, JY0, AZ, TEX_NJFLOOR))
+    W(box(JX0, JY1, AZ - T, JX1, NY1, AZ, TEX_NJFLOOR))
+    # Glass rail round the stair down to the platform, open at its top (east) end.
+    for x0, x1, ya, yb in ((JX0, JX1, JY0 - 2, JY0), (JX0, JX1, JY1, JY1 + 2), (JX0 - 2, JX0, JY0 - 2, JY1 + 2)):
+        W(box(x0, ya, AZ, x1, yb, AZ + 42, TEX_GLASS))
     W(box(AX1, NY0 - T, AZ - T, NX1 + T, NY0, top, TEX_NJWALL))
     W(box(AX1, NY1, AZ - T, NX1 + T, NY1 + T, top, TEX_NJWALL))
     W(box(NX1, NY0, AZ - T, NX1 + T, NY1, top, TEX_NJWALL))
@@ -457,6 +525,7 @@ def build():
     lirr(W, E)
     amtrak(W, E)
     njt(W, E)
+    platforms(W, E)
     props(E)
     ents += [
         ent("light_environment", (0, 0, H - 64), angles="-60 30 0", pitch="-60",

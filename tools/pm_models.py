@@ -279,7 +279,22 @@ def njcol():
     return m
 
 
-MODELS = {"njtruss": njtruss, "njcol": njcol, "amcol": amcol, "seats": seats, "colboard": colboard, "tvm": tvm, "escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
+def pmcar():
+    """A Bombardier MultiLevel coach, 85 ft long, 10.5 ft wide, 15.5 ft over the rail (cited): stainless
+    body with the two-level window band (mlside), dark underframe and two trucks. Origin: top of
+    rail at the car's centre; place yaw 90 to run along world x."""
+    m = Mesh()
+    L, Wd = 510, 63
+    _box(m, "stainless", -L, -Wd, 22, L, Wd, 176, faces={(0, 1, 0): "mlside", (0, -1, 0): "mlside",
+                                                          (1, 0, 0): "mlend", (-1, 0, 0): "mlend"})
+    _box(m, "stainless", -L + 6, -Wd + 6, 176, L - 6, Wd - 6, 186)
+    _box(m, "clockcase", -L + 40, -Wd + 8, 10, L - 40, Wd - 8, 22)
+    for x in (-380, 380):
+        _box(m, "rubber", x - 60, -32, 0, x + 60, 32, 22)
+    return m
+
+
+MODELS = {"pmcar": pmcar, "njtruss": njtruss, "njcol": njcol, "amcol": amcol, "seats": seats, "colboard": colboard, "tvm": tvm, "escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
 
 
 def build():

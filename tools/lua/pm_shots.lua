@@ -31,6 +31,11 @@ local CAMS = {  -- Moynihan blockout (session 2): 200 x 155 ft hall, wells, side
   { "njt_vault",    Vector(6000, -1440, -190), Angle(-35, 10, 0) },
   { "njt_gates",    Vector(5800, -1500, -180), Angle(0, 55, 0) },
   { "njt_tickets",  Vector(6100, -1250, -180), Angle(0, 215, 0) },
+  { "plat_west",    Vector(2600, -1600, -530), Angle(4, 0, 0) },
+  { "plat_train",   Vector(3300, -1450, -540), Angle(2, 20, 0) },
+  { "plat_esc",     Vector(3200, -1560, -530), Angle(-10, 0, 0) },
+  { "plat_stair",   Vector(6200, -1700, -530), Angle(-14, 0, 0) },
+  { "njt_stairtop", Vector(7250, -1700, -175), Angle(30, 180, 0) },
   { "amtrak_esc",   Vector(4600, -1400, -170), Angle(22, 200, 0) },
 }
 if want ~= "go" then

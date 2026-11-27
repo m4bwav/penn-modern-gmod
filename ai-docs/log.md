@@ -35,3 +35,7 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - 2 CC0 Commons refs, njt-dimensions.md, njt(): hall through the Amtrak east wall, diamond granite floor, trussed white vault on flared columns, track gates band, NJ Transit ticket windows. 2285 verts, 9.1 MB, 146 fps, walk 11/11.
 - A translucent VTF written by srctools needs VTFFlags.EIGHTBITALPHA or Source draws it opaque (DXT5 alpha alone is ignored). A $translucent brush with $envmap env_cubemap rendered white because cubemaps are never built.
 - njtruss.mdl: like the Moynihan trusses, a model spanning SMD y needs yaw 90 to span world y.
+## [2026-11-27] add | session 12: platforms with a train, 0.5.0
+- 6 Commons refs (5 CC0, 1 BY-SA), platform-dimensions.md, platforms(): island platform between two tracks 30 ft under the Amtrak/NJT halls, Amtrak escalator lands on it, new stair up through the NJT floor, pmcar.mdl MultiLevel coaches x4. 3216 verts, 11.4 MB, 142+ fps, walk 13/13.
+- make_map.py: the platform ceiling slab (z -320..-304) fell into the "30 ft below" slice and painted the whole platform blue; platform-level brushes are now filtered first.
+- The Bash tool's heredoc turns a doubled backslash into one: build VMT strings in pm_textures.py from existing constants (VLG = UNLIT.replace(...)) instead of writing escapes through Bash.
