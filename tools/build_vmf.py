@@ -40,6 +40,7 @@ BOARDS = ("pennmodern/board_name", "pennmodern/board_info")
 vmf_lib.SCALE.update({TEX_FLOOR: 0.375, TEX_WALL: 0.5, TEX_TRIM: 0.25, TEX_SHOP: 0.375,
                       BOARDS[0]: 0.3515625, BOARDS[1]: 0.3515625})
 TEX_GLASS = "glass/glasswindow007a"
+STW, STL = 6 * FT, 22 * 16                # balcony stair: 6 ft wide, 22 risers of 12 u on 16 u treads
 TEX_SKY = "tools/toolsskybox"
 
 
@@ -97,9 +98,20 @@ def side_halls(W, E):
         for k in range(-3, 4):
             x = k * 25 * FT
             W(box(x - 18, edge - 18, 0, x + 18, edge + 18, BALC, TEX_TRIM))
-        W(box(-HX, y0, BALC, HX, y1, BALC + 18, TEX_TRIM))
+        # Balcony slab with an opening at the west end for the stair (band in front of the upper wall).
+        sa_, sb_ = sorted((sgn * (HY - 8 * FT - STW), sgn * (HY - 8 * FT)))
+        W(box(-HX + STL, y0, BALC, HX, y1, BALC + 18, TEX_TRIM))
+        for ya, yb in ((y0, sa_), (sb_, y1)):
+            if yb > ya:
+                W(box(-HX, ya, BALC, -HX + STL, yb, BALC + 18, TEX_TRIM))
         ra, rb = sorted((edge, edge - sgn * 2))
         W(box(-HX, ra, BALC + 18, HX, rb, BALC + 18 + 42, TEX_GLASS))
+        # Stair up to the balcony, climbing east from the west wall; glass rail on the hall side of the opening.
+        n = (BALC + 18) // 12
+        for i in range(n):
+            W(box(-HX + i * 16, sa_, 0, -HX + (i + 1) * 16, sb_, (i + 1) * 12 if i < n - 1 else BALC + 18, TEX_TRIM))
+        ga, gb = (sa_ - 2, sa_) if sgn > 0 else (sb_, sb_ + 2)
+        W(box(-HX, ga, BALC + 18, -HX + STL, gb, BALC + 18 + 42, TEX_GLASS))
         # Over the balcony: a lit, glazed upper floor (shop and office fronts), then the wall band
         # up to the truss springing, both set back 8 ft.
         wa, wb = sorted((sgn * (HY - 8 * FT), sgn * HY))
@@ -114,8 +126,18 @@ def side_halls(W, E):
         for x0, tex in ((-720, BOARDS[0]), (360, BOARDS[1])):
             vmf_lib.FACEUV[tex] = board_uv(x0)
             W(box(x0, ba, 360, x0 + 360, bb, 540, tex))
-        E(ent("light", (0, sgn * (HY - SIDE // 2), BALC - 24), _light="255 240 215 120"))
+        # Warm downlights under the balcony, one per bay between the piers.
+        for k in range(-3, 3):
+            E(ent("light", (k * 25 * FT + 150, sgn * (HY - SIDE // 2), BALC - 16), _light="255 214 160 45"))
         E(ent("light", (0, sgn * (HY - 4 * FT), BALC + 8 * FT), _light="255 240 215 80"))
+
+
+def pylons(W):
+    # Freestanding black departure pylons at the well ends (the 11/12 track signs), lit screen band on top.
+    for x in (-WX - 10 * FT, WX + 10 * FT):
+        for y in (-20 * FT, 20 * FT):
+            W(box(x - 18, y - 9, 0, x + 18, y + 9, 8 * FT, TEX_TRIM))
+            W(box(x - 18, y - 10, 8 * FT, x + 18, y + 10, 11 * FT, TEX_SHOP))
 
 
 def props(E):
@@ -137,11 +159,12 @@ def build():
     hall(W)
     lower(W)
     side_halls(W, E)
+    pylons(W)
     props(E)
     ents += [
         ent("light_environment", (0, 0, H - 64), angles="-60 30 0", pitch="-60",
-            _light="255 245 225 300", _ambient="170 190 220 60"),
-        ent("light", (0, 0, SPRING), _light="240 235 225 80"),
+            _light="255 240 215 220", _ambient="170 190 220 35"),
+        ent("light", (0, 0, SPRING), _light="240 235 225 40"),
         ent("light", (0, 0, LZ + 9 * FT), _light="240 240 235 90"),
         ent("light", (-50 * FT, 0, LZ + 9 * FT), _light="240 240 235 60"),
         ent("light", (50 * FT, 0, LZ + 9 * FT), _light="240 240 235 60"),
@@ -150,6 +173,12 @@ def build():
         ent("env_cubemap", (0, 0, LZ + 100)),
     ]
     NL = "\n"
+    ents.append(ent("env_tonemap_controller", (0, 0, 64), targetname="tonemap"))
+    conn = ['"OnMapSpawn" "tonemap,SetAutoExposureMin,0.5,0,-1"',
+            '"OnMapSpawn" "tonemap,SetAutoExposureMax,1.2,0,-1"',
+            '"OnMapSpawn" "tonemap,SetBloomScale,0.2,0,-1"']
+    block = "\tconnections" + NL + "\t{" + NL + "".join("\t\t" + c + NL for c in conn) + "\t}" + NL + "}" + NL
+    ents.append(ent("logic_auto", (0, 0, 96), spawnflags="1")[:-2] + block)
     world_s = ('world' + NL + '{' + NL + '\t"id" "%d"' + NL + '\t"mapversion" "1"' + NL + '\t"classname" "worldspawn"' + NL
                + '\t"skyname" "sky_day01_01"' + NL + '%s}' + NL) % (nid(), "".join(world))
     head = ('versioninfo' + NL + '{' + NL + '\t"editorversion" "400"' + NL + '\t"editorbuild" "8000"' + NL + '\t"mapversion" "1"' + NL

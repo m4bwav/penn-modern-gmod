@@ -14,3 +14,6 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-11-26] add | session 4: gabled Pratt trusses, upper floor glazing, DXT textures
 - Truss profile now leg, knee, flat gable like the refs; DXT1/5 VTFs cut the BSP 13.2 to 4.2 MB. 742 verts, 146 fps.
 - 2026-11-26 session 4: ../penn-modern-gmod-s3 and -s4 folders could not be deleted (Permission denied, a shell held them); they are pruned from git, delete the leftovers if still there. srctools 2.7 writes DXT1/DXT5 VTFs directly.
+- 2026-11-26 driver pass 4 (meant as session 5) saw the driver PID alive and skipped as 'already handled'; a driver-started session must do the item. Pass 5 is doing session 5.
+## [2026-11-26] add | session 5: lighting, balcony stairs, pylons
+- Tonemap controller, softer sun, warm balcony downlights, west-end stairs, departure pylons. 1227 verts, 146 fps.
