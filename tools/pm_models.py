@@ -20,32 +20,81 @@ MAT = ROOT / "src" / "materials" / "models" / "pennmodern"
 FT = 12
 SPAN = 155 * FT // 2     # half the N-S span of the hall (build_vmf.py HY)
 RISE = 42 * FT           # truss springing ~50 ft to the 92 ft skylight crown
-DEPTH = 4 * FT           # truss depth between its chords
+DEPTH = 6 * FT           # truss depth between its chords
 LONG = 200 * FT          # hall length E-W (build_vmf.py 2*HX)
 
 VMTS = {
-    "steel": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.82 0.84 0.86]"\n'
+    "steel": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.42 0.44 0.47]"\n'
              '\t"$surfaceprop" "metal"\n}\n',
     "clockcase": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.12 0.12 0.13]"\n'
                  '\t"$surfaceprop" "metal"\n}\n',
 }
 
 
+KNEE = 14 * FT            # straight legs above the springing before the knee
+SLOPE_Y = 62 * FT         # where the knee meets the gable slope (|y|)
+SLOPE_Z = 28 * FT
+
+
+def _profile():
+    """Half profile of the truss top chord, springing to ridge: leg, rounded knee, flat gable
+    (the refs show a low gabled Pratt truss, not a round arch). Returns (y, z) from y = SPAN."""
+    pts = [(SPAN, 0), (SPAN, KNEE)]
+    for k in range(1, 6):   # quadratic knee from the leg top to the slope start
+        u = k / 6
+        a, b, c = (SPAN, KNEE), (SPAN, SLOPE_Z), (SLOPE_Y, SLOPE_Z + (RISE - SLOPE_Z) * (SPAN - SLOPE_Y) / SPAN)
+        pts.append(tuple((1 - u) ** 2 * a[i] + 2 * u * (1 - u) * b[i] + u * u * c[i] for i in (0, 1)))
+    pts += [(SLOPE_Y * (1 - k / 6), pts[-1][1] + (RISE - pts[-1][1]) * k / 6) for k in range(1, 7)]
+    return pts
+
+
+PROFILE = _profile()
+_LEN = [0.0]
+for _a, _b in zip(PROFILE, PROFILE[1:]):
+    _LEN.append(_LEN[-1] + math.dist(_a, _b))
+
+
+def _at(s):
+    """Point and unit tangent on the full profile at s in [0, 1] (0 = south springing, 1 = north)."""
+    south = s < .5
+    d = (s * 2 if south else (1 - s) * 2) * _LEN[-1]
+    i = max(j for j in range(len(_LEN) - 1) if _LEN[j] <= d) if d < _LEN[-1] else len(_LEN) - 2
+    (y0, z0), (y1, z1) = PROFILE[i], PROFILE[i + 1]
+    f = (d - _LEN[i]) / (_LEN[i + 1] - _LEN[i])
+    y, z = y0 + (y1 - y0) * f, z0 + (z1 - z0) * f
+    ty, tz = y1 - y0, z1 - z0
+    if south:
+        y, ty = -y, -ty
+    else:
+        ty, tz = ty, -tz
+        ty = -ty
+    n = math.hypot(ty, tz)
+    return y, z, ty / n, tz / n
+
+
 def arch(t, inset=0):
-    """Point on the elliptical truss arch at angle t (0 = south springing, pi = north), y-z plane."""
-    return (0, (SPAN - inset) * math.cos(t), (RISE - inset) * math.sin(t))
+    """Point on the truss profile at t (0 = south springing, pi = north), y-z plane, moved inset
+    units inward (down and toward the centre line; negative = outward)."""
+    y, z, ty, tz = _at(t / math.pi)
+    ny, nz = -tz, ty                       # left normal of the south-to-north tangent
+    if ny * -y + nz * -z < 0 and abs(y) > 1:
+        ny, nz = -ny, -nz
+    if abs(y) <= 1:
+        ny, nz = 0, -1
+    return (0, y + ny * inset, z + nz * inset)
 
 
 def truss():
-    """Transverse arched truss (the kept 1912-14 Farley steel): two chords and a zigzag web,
+    """Transverse gabled Pratt truss (the kept 1912-14 Farley steel): two chords and a zigzag web,
     legs down to the balcony. Origin: hall centre line at springing height; spans y = -SPAN..SPAN."""
     m = Mesh()
     n = 28
     ts = [math.pi * k / n for k in range(n + 1)]
     for k in range(n):
         for ins in (0, DEPTH):
-            m.tube("steel", arch(ts[k], ins), arch(ts[k + 1], ins), 5, 5, 6)
-        m.tube("steel", arch(ts[k], 0), arch(ts[k + 1], DEPTH), 3, 3, 6)
+            m.tube("steel", arch(ts[k], ins), arch(ts[k + 1], ins), 9, 9, 6)
+        a, b = (k, k + 1) if k < n // 2 else (k + 1, k)   # Pratt: diagonals fall toward mid-span
+        m.tube("steel", arch(ts[a], 0), arch(ts[b], DEPTH), 3, 3, 6)
         m.tube("steel", arch(ts[k], DEPTH), arch(ts[k], 0), 3, 3, 6)
     for sgn in (-1, 1):
         for ins in (0, DEPTH):
@@ -83,6 +132,8 @@ def clock():
     h, a, rod = 12 * FT, 3 * FT, 30 * FT
     m.tube("clockcase", (0, 0, 0), (0, 0, -rod), 3, 3, 8)
     _box(m, "clockcase", -a, -a, -rod - h, a, a, -rod)
+    for z0, z1, w in ((-rod - 10, -rod, a + 6), (-rod - h, -rod - h + 10, a + 6), (-rod + 0, -rod + 14, a - 10)):
+        _box(m, "clockcase", -w, -w, z0, w, w, z1)   # stepped art-deco caps
     f = a - 6
     for nrm in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0)):
         sub = Mesh()
@@ -106,8 +157,8 @@ def skylight():
     for i in range(nx):
         for k in range(n):
             (_, y0, z0), (_, y1, z1) = pts[k], pts[k + 1]
-            t = (math.pi * (k + .5) / n)
-            nrm = (0, -math.cos(t), -math.sin(t))   # faces down into the hall ($nocull shows both)
+            c = arch(math.pi * (k + .5) / n, 0)
+            nrm = tuple(p - q for p, q in zip(arch(math.pi * (k + .5) / n, 1), c))   # into the hall ($nocull shows both)
             u0, u1, v0, v1 = xs[i] / cell, xs[i + 1] / cell, arc[k] / cell, arc[k + 1] / cell
             m.quad("skylight", ((xs[i], y0, z0), nrm, (u0, v0)), ((xs[i], y1, z1), nrm, (u0, v1)),
                    ((xs[i + 1], y1, z1), nrm, (u1, v1)), ((xs[i + 1], y0, z0), nrm, (u1, v0)))
