@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "metal/metalwall001a"
+	"$color2" "[0.82 0.84 0.86]"
+	"$surfaceprop" "metal"
+}

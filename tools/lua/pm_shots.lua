@@ -8,10 +8,13 @@ local want = string.Trim(file.Read("pm_shots_go.txt", "DATA") or "go")
 file.Delete("pm_shots_go.txt")
 file.CreateDir("pm_shots")
 
-local CAMS = {  -- starter cameras for the placeholder Moynihan hall; sized to the 200 x 155 ft blockout
-  { "hall_west", Vector(-1050, 0, 72), Angle(-8, 0, 0) },
-  { "hall_up",   Vector(0, 0, 72), Angle(-70, 0, 0) },
-  { "hall_east", Vector(1050, 0, 72), Angle(-8, 180, 0) },
+local CAMS = {  -- Moynihan blockout (session 2): 200 x 155 ft hall, wells, side halls, lower stub
+  { "hall_west",  Vector(-1100, 0, 72), Angle(-14, 0, 0) },
+  { "hall_up",    Vector(0, 0, 72), Angle(-70, 0, 0) },
+  { "hall_east",  Vector(1100, 0, 72), Angle(-14, 180, 0) },
+  { "wells",      Vector(-500, -560, 200), Angle(20, 30, 0) },
+  { "side_south", Vector(-900, -780, 72), Angle(-5, 20, 0) },
+  { "lower",      Vector(-780, 0, -290), Angle(-5, 0, 0) },
 }
 if want ~= "go" then
   local keep, set = {}, {}
