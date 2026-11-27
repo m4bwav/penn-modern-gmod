@@ -1,10 +1,10 @@
 #!/bin/sh
-# Package the compiled BSP as a .gma and update Workshop item ${WORKSHOP_ID:?set WORKSHOP_ID (first upload: gmpublish create)}.
+# Package the compiled BSP as a .gma and update Workshop item 3846578407.
 # Run tools/compile.sh first. Usage: sh tools/package.sh "change note" [preview.jpg ...]
 # DRY=1 builds the .gma only.
 set -e
 G="${GMOD:-D:/SteamLibrary/steamapps/common/GarrysMod}"
-ID="${WORKSHOP_ID:?set WORKSHOP_ID; first upload: gmpublish create, then record the id here}"
+ID="${WORKSHOP_ID:-3846578407}"   # Workshop item created 2026-11-26 (0.1.0)
 cd "$(dirname "$0")/.."
 . tools/gmod_lock.sh; gmod_lock_take   # shared GMod lock, released on exit
 NOTE="${1:-Update}"

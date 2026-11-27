@@ -19,3 +19,6 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - Tonemap controller, softer sun, warm balcony downlights, west-end stairs, departure pylons. 1227 verts, 146 fps.
 ## [2026-11-26] add | session 6: escalator models, pylon screens
 - escalator.mdl pairs in both wells over playerclip ramps, TRACKS 11 12 pylon screens, calmer storefront. 1224 verts, 146 fps. Stair walk test not done yet (no in-game walk tool used).
+## [2026-11-26] add | session 7: walk test, 0.1.0 release
+- tools/walk.sh walks stairs and escalators in game; it caught the well-end balustrade blocking the escalator tops. Walk start points must clear every step under the 32 u hull or the player is stuck and never moves.
+- 0.1.0: gmpublish create -> Workshop 3846578407, workshop_update.py set title/desc/previews/public (EResult 1). Banner: Z-Image Turbo on the Mac, comfy_gen.py with the building-sprite workflow patched to 1536x640 and a bare {SUBJECT} prompt.
