@@ -17,6 +17,8 @@ local ROUTES = {  -- name, start, yaw, seconds, end height to reach [, x to reac
   { "esc_amtrak_down", Vector(4420, -1560, -236), 180, 6, -596 },
   { "esc_amtrak_up", Vector(3600, -1560, -596), 0, 6, -244 },
   { "to_njt", Vector(4700, -1440, -236), 0, 8, -240, 5400 },
+  { "njt_stair_down", Vector(7120, -1700, -236), 180, 8, -596 },
+  { "njt_stair_up", Vector(6460, -1700, -596), 0, 8, -244 },
 }
 local out, cur, ply = {}, nil, nil
 hook.Add("StartCommand", "pm_walk", function(p, cmd)

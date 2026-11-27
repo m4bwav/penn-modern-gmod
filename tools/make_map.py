@@ -13,7 +13,7 @@ OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "docs/level-map.png")
 FT = 12
 LEVELS = ((0, (70, 62, 56)), (-30 * FT, (60, 110, 170)))
 txt = VMF.read_text()
-hall, lower, amtrak, clip = [], [], [], []
+hall, lower, amtrak, clip, plat = [], [], [], [], []
 for blk in re.split(r"(?m)^\s*solid$", txt)[1:]:
     blk = re.split(r"(?m)^\s*(?:entity|editor)$", blk)[0]
     pts = [tuple(map(float, p)) for p in re.findall(r"\(([-\d.]+) ([-\d.]+) ([-\d.]+)\)", blk)]
@@ -24,6 +24,9 @@ for blk in re.split(r"(?m)^\s*solid$", txt)[1:]:
     r = (min(xs), min(ys), max(xs), max(ys))
     if any("playerclip" in t for t in tex):
         clip.append(r)
+    elif max(zs) <= -300 and r[3] <= -1100:   # platform level, 50 ft below the street (its ceiling slab skipped)
+        if min(zs) <= -50 * FT + 48 <= max(zs):
+            plat.append(r)
     elif r[0] >= 4880 and r[3] <= -1000:   # NJ Transit concourse: its vault reaches street level, so judge it by its own floor
         if min(zs) <= -20 * FT + 48 <= max(zs):
             amtrak.append(r)
@@ -51,6 +54,8 @@ for r in lower: rect(r, LEVELS[1][1])
 for r in amtrak: rect(r, (70, 140, 90))
 for r in clip: rect(r, (175, 175, 175))
 for r in hall: rect(r, LEVELS[0][1])
+for r in plat:
+    a, b = P(r[0], r[3]), P(r[2], r[1]); d.rectangle((a[0], a[1], b[0], b[1]), outline=(220, 120, 20), width=3)
 for x, y in spawn:
     cx, cy = P(x, y); d.ellipse((cx-10, cy-10, cx+10, cy+10), fill=(200, 40, 40)); d.text((cx+14, cy-12), "spawn", fill=(200, 40, 40), font=f)
 for lbl, x, y in (("Moynihan Train Hall", 0, 520), ("Escalators down", 0, 0), ("Stairs to balcony", -700, -640),
@@ -58,9 +63,9 @@ for lbl, x, y in (("Moynihan Train Hall", 0, 520), ("Escalators down", 0, 0), ("
                   ("West End Concourse below (blue)", 0, -420), ("Under Eighth Avenue", 1620, 330), ("LIRR concourse (blue)", 3000, 250),
                   ("33rd St pavilion, escalator up", 4800, -500), ("Amtrak concourse (green)", 3440, -1100),
                   ("Stair up from LIRR", 3024, -540), ("Waiting room", 2360, -2230), ("Escalator to tracks", 4036, -1760),
-                  ("NJ Transit concourse (green)", 6150, -1440), ("Track gates", 6150, -1000)):
+                  ("NJ Transit concourse (green)", 6150, -1440), ("Track gates", 6150, -1000), ("Platform and train below (orange)", 4000, -2080), ("Stair to platform", 6800, -1900)):
     cx, cy = P(x, y); w = d.textlength(lbl, font=f); d.rectangle((cx-w/2-6, cy-16, cx+w/2+6, cy+14), fill=(255, 255, 255)); d.text((cx-w/2, cy-13), lbl, fill=(30, 30, 30), font=f)
 d.text((60, 30), "gm_penn_modern: rough plan", fill=(30, 30, 30), font=fb)
-d.text((60, 78), f"dark = hall level at chest height, green = Amtrak and NJ Transit 20 ft below, blue = concourses 30 ft below, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
+d.text((60, 78), f"dark = hall level, green = Amtrak and NJ Transit -20 ft, blue = concourses -30 ft, orange = platforms -50 ft, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
 d.text((60, H-45), "Generated from src/gm_penn_modern.vmf by tools/make_map.py", fill=(120, 120, 120), font=f)
 OUT.parent.mkdir(parents=True, exist_ok=True); img.save(OUT); print("wrote", OUT, len(hall), len(lower), len(clip))
