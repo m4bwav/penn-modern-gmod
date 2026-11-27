@@ -1,0 +1,7 @@
+build/
+src/*.bsp
+src/*.log
+src/*.prt
+src/*.lin
+src/packlist.txt
+__pycache__/

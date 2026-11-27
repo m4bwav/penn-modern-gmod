@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.vtf binary
+*.mdl binary
+*.vvd binary
+*.vtx binary
+*.phy binary
+*.bsp binary
+*.jpg binary
+*.png binary
+*.gma binary
