@@ -38,6 +38,10 @@ VMTS = {
               '\t"$surfaceprop" "metal"\n}\n',
     "seat": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.09 0.09 0.1]"\n'
             '\t"$surfaceprop" "plastic"\n}\n',
+    "njwhite": '"UnlitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.9 0.92 0.9]"\n'
+               '\t"$surfaceprop" "metal"\n}\n',
+    "njstone": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.86 0.8 0.68]"\n'
+               '\t"$surfaceprop" "stone"\n}\n',
     "clockcase": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.12 0.12 0.13]"\n'
                  '\t"$surfaceprop" "metal"\n}\n',
 }
@@ -253,7 +257,29 @@ def seats():
     return m
 
 
-MODELS = {"amcol": amcol, "seats": seats, "colboard": colboard, "tvm": tvm, "escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
+def njtruss():
+    """One white arched truss across the NJ Transit vault (VY0..VY1 in build_vmf.py, 280 u wide):
+    elliptical top and bottom chords with a zigzag web, springing 12 ft up, crown 20 ft.
+    Origin: vault centre line at springing height; spans y = -140..140 (place yaw 90: studiomdl turns SMD y to the prop's -x)."""
+    m = Mesh()
+    n = 14
+    pt = lambda k, r, h: (0, -r * math.cos(math.pi * k / n), h * math.sin(math.pi * k / n))
+    for k in range(n):
+        m.tube("njwhite", pt(k, 140, 92), pt(k + 1, 140, 92), 3, 3, 6)
+        m.tube("njwhite", pt(k, 124, 70), pt(k + 1, 124, 70), 3, 3, 6)
+        m.tube("njwhite", pt(k, 140, 92), pt(k + 1, 124, 70), 1.5, 1.5, 4)
+    return m
+
+
+def njcol():
+    """A flared NJ Transit concourse column, cream stone, 3 ft round, its capital spreading to
+    8 ft under the 12 ft side ceiling. Origin: column centre at the floor."""
+    m = Mesh()
+    m.lathe("njstone", [(18, 0), (18, 100), (24, 116), (36, 132), (48, 140), (48, 144), (0, 144)], 0, 0, 0, 20)
+    return m
+
+
+MODELS = {"njtruss": njtruss, "njcol": njcol, "amcol": amcol, "seats": seats, "colboard": colboard, "tvm": tvm, "escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
 
 
 def build():
