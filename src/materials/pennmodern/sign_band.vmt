@@ -1,0 +1,6 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pennmodern/sign_band"
+	"$surfaceprop" "metal"
+	"$selfillum" "1"
+}

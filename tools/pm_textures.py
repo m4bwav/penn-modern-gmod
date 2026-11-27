@@ -164,3 +164,70 @@ dr.text((128, 70), "TRACKS", font=font(40), fill=(255, 176, 40), anchor="mm")
 dr.text((128, 160), "11  12", font=font(84), fill=(245, 245, 245), anchor="mm")
 save(np.asarray(im, float), "pylon_screen", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
      '\t"$selfillum" "1"\n}\n', surf="glass")
+
+# --- Area 2, the LIRR concourse (refs/photos/Penn_Station_LIRR_concourse_renovated_high_ceiling.jpg,
+# LIRR_Penn_Station_2025a.jpg): grey granite tiles, warm wood-slat ceiling, white ceiling panels with
+# downlights, the 33rd Street pavilion's lit blue coffer grid, white columns fading to blue, signage.
+SL = '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n\t"$selfillum" "1"\n}\n'
+
+# Floor: speckled grey granite, 2 x 2 ft tiles (4 per tile row), with a darker band every other row.
+img = np.array([128, 130, 134], float) * (1 + fbm(N, 6) * 0.05)[..., None]
+img *= (1 + (rng.random((N, N)) - .5) * 0.18)[..., None]
+for k in range(0, N, N // 4):
+    img[k:k+2] *= 0.8
+    img[:, k:k+2] *= 0.8
+save(img, "floor_granite", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$envmap" "env_cubemap"\n\t"$envmaptint" "[0.08 0.08 0.08]"\n}\n')
+
+# Wood-slat ceiling: honey wood slats with dark gaps and a lit line every 8 slats.
+img = np.zeros((N, N, 3)) + [186, 140, 92]
+img *= (1 + fbm(N, 5) * 0.08)[..., None]
+img[(yy % 32) < 6] = [60, 44, 32]
+img[(yy % 256) < 6] = [255, 240, 205]
+save(img, "ceil_wood", surf="wood")
+
+# White ceiling: large pale panels, dark reveal joints, small downlight dots.
+img = np.zeros((N, N, 3)) + [222, 224, 226]
+img *= (1 + fbm(N, 4) * 0.03)[..., None]
+img[(yy % 256) < 4] = [90, 92, 96]
+img[(xx % 512) < 4] = [90, 92, 96]
+dots = (((xx + 64) % 128 - 64) ** 2 + ((yy + 128) % 256 - 128) ** 2) < 25
+img[dots] = [255, 252, 240]
+save(img, "ceil_white", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$selfillum" "1"\n\t"$selfillumtint" "[0.55 0.55 0.55]"\n}\n')   # reads as a lit ceiling
+
+# Light box: the pavilion's coffer grid, glowing sky-blue panels in dark steel frames, 2 x 2 per tile.
+img = np.zeros((N, N, 3)) + [24, 26, 30]
+c = N // 2
+inner = ((xx % c) > 22) & ((xx % c) < c - 22) & ((yy % c) > 22) & ((yy % c) < c - 22)
+glow = 1 - 0.25 * ((((xx % c) - c / 2) ** 2 + ((yy % c) - c / 2) ** 2) / (c / 2) ** 2)
+img[inner] = (np.array([130, 190, 245]) * glow[..., None])[inner]
+img[((xx % c) - 11) ** 2 + ((yy % c) - 11) ** 2 < 16] = [255, 220, 150]
+save(img, "lightbox", SL, surf="glass")
+
+# Column: white enamel, a band at 9 ft, deep blue gradient toward the floor (512 tall, mapped once).
+img = np.zeros((N, 256, 3)) + [228, 230, 232]
+t = np.linspace(0, 1, N)[:, None, None]
+blue = np.array([28, 48, 140]) * (0.7 + 0.3 * t) + np.array([228, 230, 232]) * 0
+mix = np.clip((t - 0.45) / 0.3, 0, 1)
+img = img * (1 - mix) + blue * mix
+img[:, :4] *= 0.8
+save(img, "column_blue", surf="metal")
+
+# White wall panels.
+img = np.array([215, 216, 218], float) * (1 + fbm(N, 5) * 0.03)[..., None]
+img[(yy % 256) < 3] *= 0.82
+img[(xx % 256) < 3] *= 0.82
+save(img, "wall_white")
+
+# Overhead wayfinding band: green Exit, blue street exit, black subway/LIRR, yellow Tracks.
+W2 = 1024
+im = Image.new("RGB", (W2, 128), (18, 18, 20))
+dr = ImageDraw.Draw(im)
+for x0, x1, col in ((0, 110, (0, 150, 70)), (112, 470, (20, 40, 160)), (472, 800, (22, 22, 24)), (802, 1024, (250, 190, 20))):
+    dr.rectangle((x0, 4, x1, 123), fill=col)
+dr.text((55, 64), "Exit", font=font(40), fill=(255, 255, 255), anchor="mm")
+dr.text((290, 64), "7th Av & 33rd St", font=font(36), fill=(255, 255, 255), anchor="mm")
+dr.text((636, 64), "LIRR  Subway  NJ Transit", font=font(30), fill=(255, 255, 255), anchor="mm")
+dr.text((913, 64), "Tracks 13-21", font=font(30), fill=(20, 20, 20), anchor="mm")
+save(np.asarray(im, float), "sign_band", SL, surf="metal")
