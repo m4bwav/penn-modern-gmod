@@ -22,3 +22,4 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-11-26] add | session 7: walk test, 0.1.0 release
 - tools/walk.sh walks stairs and escalators in game; it caught the well-end balustrade blocking the escalator tops. Walk start points must clear every step under the 32 u hull or the player is stuck and never moves.
 - 0.1.0: gmpublish create -> Workshop 3846578407, workshop_update.py set title/desc/previews/public (EResult 1). Banner: Z-Image Turbo on the Mac, comfy_gen.py with the building-sprite workflow patched to 1536x640 and a bare {SUBJECT} prompt.
+- 2026-11-26 session 7: release v0.1.0 was first created before PR #7 merged (merge returned 'Base branch was modified', a transient). Deleted and re-cut on the merge commit. Create releases only after confirming the merge commit is on origin/main.

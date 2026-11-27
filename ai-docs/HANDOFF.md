@@ -31,7 +31,7 @@ Updated: 2026-11-26 (session 7)
 
 ## Next
 1. Session 8: area 2, the LIRR concourse (2021 rebuild): Commons refs (refs/SOURCES.md), dimensions in ai-docs/notes/, blockout joined to the West End Concourse stub through a real opening (currently sealed), compile, walk, shots.
-2. Wiki for the repo (wikiwright) if session 7 did not finish it.
+2. Wiki: not made in session 7. Wiki is enabled but has no repo until a first page is saved at https://github.com/m4bwav/penn-modern-gmod/wiki/_new in a signed-in browser (headless sessions have none); then wikiwright preflight and push the pages.
 
 ## Waiting on Mark
 - Nothing.
