@@ -19,3 +19,12 @@ Only redistributable material: Wikimedia Commons CC0, public domain, CC BY, CC B
 | Moynihan_Train_Hall_from_Metropolitan_Lounge_December_2024.jpg | Moynihan Train Hall from Metropolitan Lounge, December 2024 | Pi.1415926535 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Moynihan_Train_Hall_from_Metropolitan_Lounge,_December_2024.jpg | 2026-11-26 |
 | New_Penn_Station_50925574491.jpg | New Penn Station (50925574491) | Eden, Janine and Jim from New York City | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:New_Penn_Station_(50925574491).jpg | 2026-11-26 |
 | Moynihan_Station.jpg | Moynihan Station | Infrastructureemily | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Moynihan_Station.jpg | 2026-11-26 |
+| Penn_Station_LIRR_concourse_renovated_high_ceiling.jpg | Penn Station LIRR concourse, renovated high ceiling | ComplexRational | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Penn_Station_LIRR_concourse,_renovated_high_ceiling.jpg | 2026-11-26 |
+| Penn_Station_LIRR_concourse_2.jpg | Penn Station LIRR concourse 2 | NHRHS2010 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Penn_Station_LIRR_concourse_2.jpg | 2026-11-26 |
+| Penn_Station_LIRR_Concourse_52534595683.jpg | Penn Station LIRR Concourse (52534595683) | Metropolitan Transportation Authority from United States of America | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Penn_Station_LIRR_Concourse_(52534595683).jpg | 2026-11-26 |
+| LIRR_Penn_Station_2025a.jpg | LIRR Penn Station 2025a | Antony-22 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:LIRR_Penn_Station_2025a.jpg | 2026-11-26 |
+| LIRR_Penn_Station_2025b.jpg | LIRR Penn Station 2025b | Antony-22 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:LIRR_Penn_Station_2025b.jpg | 2026-11-26 |
+| LIRR_Penn_Station_2025c.jpg | LIRR Penn Station 2025c | Antony-22 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:LIRR_Penn_Station_2025c.jpg | 2026-11-26 |
+| LIRR_Penn_Station_2023a.jpg | LIRR Penn Station 2023a | Antony-22 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:LIRR_Penn_Station_2023a.jpg | 2026-11-26 |
+| 33rd_St_Corridor_52534332174.jpg | 33rd St Corridor (52534332174) | Metropolitan Transportation Authority from United States of America | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:33rd_St_Corridor_(52534332174).jpg | 2026-11-26 |
+| Penn_Station_LIRR_Concourse.jpg | Penn Station LIRR Concourse | Glugalug | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Penn_Station_LIRR_Concourse.jpg | 2026-11-26 |

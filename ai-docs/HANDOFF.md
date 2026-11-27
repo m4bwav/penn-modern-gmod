@@ -1,10 +1,10 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-26 (session 7)
+Updated: 2026-11-26 (session 8)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
-- Chain: session 7 of 40
+- Chain: session 8 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
 - Workshop ID: 3846578407 (public, created session 7; default in tools/package.sh). Updates: sh tools/package.sh "note" [previews].
@@ -29,9 +29,11 @@ Updated: 2026-11-26 (session 7)
 
 - Session 7 (branch s7-release): tools/walk.sh + lua/pm_walk_sv.lua walk test (StartCommand forces +forward; start points must clear the step under the 32 u hull). Found and fixed: the glass balustrade across each well's top end blocked the escalator exit. All 5 routes PASS (both stairs to z 258, both escalators up, one down). Full compile: vertexes 1218, faces 880, brushes 111, BSP 4.6 MB; shots/20261126-2328 all 880-1120 fps uncapped. 0.1.0: README with Z-Image Turbo banner (docs/banner.jpg), docs/level-map.png (tools/make_map.py rewritten for this map), LICENSE (MIT tools, CC BY-SA map), SECURITY.md, workshop/description.txt, licence audit in ai-docs/notes/licence-audit-0.1.0.md, Workshop 3846578407 created and made public with 5 previews, tag v0.1.0 and GitHub release, repo public.
 
+- Session 8 (branch s8-lirr): area 2 blockout. 9 LIRR refs in refs/SOURCES.md, ai-docs/notes/lirr-dimensions.md. build_vmf.py lirr(): a 30 x 12 ft passage under Eighth Avenue through an opening in the West End stub's east wall, the 57 ft wide, 18 ft LIRR corridor (400 ft slice, wood-slat and white ceilings split by a row of white-to-blue columns), the 33rd Street pavilion (40 ft lit coffer ceiling, shops, wayfinding band, escalator to a sealed street-level mezzanine). Textures floor_granite, ceil_wood, ceil_white, lightbox, column_blue, wall_white, sign_band. Full compile: vertexes 1694, faces 1220, brushes 151, BSP 6.5 MB; walk 7/7 PASS (to_lirr, esc_lirr_up new); shots/20261126-2345 all 146 fps, 5 new cams (passage, lirr_west, pavilion, lirr_east, mezz).
+
 ## Next
-1. Session 8: area 2, the LIRR concourse (2021 rebuild): Commons refs (refs/SOURCES.md), dimensions in ai-docs/notes/, blockout joined to the West End Concourse stub through a real opening (currently sealed), compile, walk, shots.
-2. Wiki: not made in session 7. Wiki is enabled but has no repo until a first page is saved at https://github.com/m4bwav/penn-modern-gmod/wiki/_new in a signed-in browser (headless sessions have none); then wikiwright preflight and push the pages.
+1. Session 9: LIRR detail. The white ceiling (ceil_white) renders dark grey even with $selfillum: find out why (lightmap, alpha mask, or the face) and fix. Slat scale, departure boards on the columns, ticket machines and benches as MDL, the LIRR ticket office, compare.jpg pairs for the LIRR refs (compare.py crashed on this run). Then 0.2.0 (README, level map, Workshop update, tag, release).
+2. Wiki: still no repo until a first page is saved at https://github.com/m4bwav/penn-modern-gmod/wiki/_new in a signed-in browser; then wikiwright.
 
 ## Waiting on Mark
 - Nothing.

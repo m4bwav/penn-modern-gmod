@@ -23,3 +23,6 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - tools/walk.sh walks stairs and escalators in game; it caught the well-end balustrade blocking the escalator tops. Walk start points must clear every step under the 32 u hull or the player is stuck and never moves.
 - 0.1.0: gmpublish create -> Workshop 3846578407, workshop_update.py set title/desc/previews/public (EResult 1). Banner: Z-Image Turbo on the Mac, comfy_gen.py with the building-sprite workflow patched to 1536x640 and a bare {SUBJECT} prompt.
 - 2026-11-26 session 7: release v0.1.0 was first created before PR #7 merged (merge returned 'Base branch was modified', a transient). Deleted and re-cut on the merge commit. Create releases only after confirming the merge commit is on origin/main.
+## [2026-11-26] add | session 8: LIRR concourse blockout
+- 9 Commons refs (CC BY / BY-SA), lirr-dimensions.md, lirr() in build_vmf.py: passage under Eighth Avenue through a real opening in the stub's east wall, 57 ft x 18 ft corridor (wood/white ceilings, blue columns), 40 ft lit-coffer 33rd St pavilion with an escalator to a sealed street mezzanine. 6 new textures. 1694 verts, 6.5 MB, 146 fps; walk 7/7 PASS (walk routes take an optional x target for level walks).
+- ceil_white with $selfillum still renders dark grey in game; not solved yet.

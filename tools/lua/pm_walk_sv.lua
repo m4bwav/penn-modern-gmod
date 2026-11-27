@@ -5,12 +5,14 @@ if game.GetMap() ~= "gm_penn_modern" then return end
 if not file.Exists("pm_walk_go.txt", "DATA") then return end
 file.Delete("pm_walk_go.txt")
 file.CreateDir("pm_walk")
-local ROUTES = {  -- name, start, yaw, seconds, end height to reach (tools/build_vmf.py)
+local ROUTES = {  -- name, start, yaw, seconds, end height to reach [, x to reach on a level walk] (tools/build_vmf.py)
   { "stair_south", Vector(-1176, -798, 40), 0, 5, 250 },
   { "stair_north", Vector(-1176, 798, 40), 0, 5, 250 },
   { "esc_south_up", Vector(-420, -240, -356), 0, 6, -4 },
   { "esc_north_up", Vector(420, 240, -356), 180, 6, -4 },
   { "esc_south_down", Vector(380, -240, 4), 180, 6, -356 },
+  { "to_lirr", Vector(700, 0, -356), 0, 10, -360, 2300 },
+  { "esc_lirr_up", Vector(4360, -200, -356), 0, 6, -4 },
 }
 local out, cur, ply = {}, nil, nil
 hook.Add("StartCommand", "pm_walk", function(p, cmd)
@@ -30,6 +32,7 @@ local function run(i)
   timer.Simple(cur[4], function()
     local p, want = ply:GetPos(), cur[5]
     local ok = (want > cur[2].z) and p.z >= want or (want < cur[2].z) and p.z <= want
+    if cur[6] then ok = p.x >= cur[6] and math.abs(p.z - want) < 8 end  -- level walk: reach x
     out[#out + 1] = string.format("%-15s %s  end (%.0f, %.0f, %.0f), wanted z %s %d", cur[1],
       ok and "PASS" or "FAIL", p.x, p.y, p.z, want > cur[2].z and ">=" or "<=", want)
     run(i + 1)
