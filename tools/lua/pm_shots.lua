@@ -13,7 +13,8 @@ local CAMS = {  -- Moynihan blockout (session 2): 200 x 155 ft hall, wells, side
   { "hall_up",    Vector(0, 0, 72), Angle(-70, 0, 0) },
   { "hall_east",  Vector(1100, 0, 72), Angle(-14, 180, 0) },
   { "wells",      Vector(-500, -560, 200), Angle(20, 30, 0) },
-  { "side_south", Vector(-900, -780, 72), Angle(-5, 20, 0) },
+  { "side_south", Vector(-650, -700, 72), Angle(-5, 20, 0) },
+  { "stair", Vector(-500, -720, 120), Angle(10, 190, 0) },
   { "lower",      Vector(-780, 0, -290), Angle(-5, 0, 0) },
 }
 if want ~= "go" then
