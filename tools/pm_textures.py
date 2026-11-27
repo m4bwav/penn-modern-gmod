@@ -193,8 +193,9 @@ img[(yy % 256) < 4] = [90, 92, 96]
 img[(xx % 512) < 4] = [90, 92, 96]
 dots = (((xx + 64) % 128 - 64) ** 2 + ((yy + 128) % 256 - 128) ** 2) < 25
 img[dots] = [255, 252, 240]
-save(img, "ceil_white", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
-     '\t"$selfillum" "1"\n\t"$selfillumtint" "[0.55 0.55 0.55]"\n}\n')   # reads as a lit ceiling
+img[(yy % 128 > 60) & (yy % 128 < 68)] = [255, 253, 246]   # long linear light strips, as in the refs
+UL = '"UnlitGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n}\n'
+save(img, "ceil_white", UL)   # $selfillum on LightmappedGeneric left it dark grey in game; unlit reads as lit panels
 
 # Light box: the pavilion's coffer grid, glowing sky-blue panels in dark steel frames, 2 x 2 per tile.
 img = np.zeros((N, N, 3)) + [24, 26, 30]
@@ -203,7 +204,7 @@ inner = ((xx % c) > 22) & ((xx % c) < c - 22) & ((yy % c) > 22) & ((yy % c) < c 
 glow = 1 - 0.25 * ((((xx % c) - c / 2) ** 2 + ((yy % c) - c / 2) ** 2) / (c / 2) ** 2)
 img[inner] = (np.array([130, 190, 245]) * glow[..., None])[inner]
 img[((xx % c) - 11) ** 2 + ((yy % c) - 11) ** 2 < 16] = [255, 220, 150]
-save(img, "lightbox", SL, surf="glass")
+save(img, "lightbox", UL, surf="glass")
 
 # Column: white enamel, a band at 9 ft, deep blue gradient toward the floor (512 tall, mapped once).
 img = np.zeros((N, 256, 3)) + [228, 230, 232]
@@ -231,3 +232,33 @@ dr.text((290, 64), "7th Av & 33rd St", font=font(36), fill=(255, 255, 255), anch
 dr.text((636, 64), "LIRR  Subway  NJ Transit", font=font(30), fill=(255, 255, 255), anchor="mm")
 dr.text((913, 64), "Tracks 13-21", font=font(30), fill=(20, 20, 20), anchor="mm")
 save(np.asarray(im, float), "sign_band", SL, surf="metal")
+
+# LIRR departure board for the columns: black screen, amber train rows, blue header (model material).
+UNLIT = '"UnlitGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n\t"$model" "1"\n}\n'
+im = Image.new("RGB", (256, 512), (8, 8, 10))
+dr = ImageDraw.Draw(im)
+dr.rectangle((0, 0, 255, 52), fill=(20, 40, 150))
+dr.text((128, 27), "Departures", font=font(30), fill=(255, 255, 255), anchor="mm")
+rows = (("5:12", "Babylon", "19"), ("5:18", "Port Wash", "13"), ("5:21", "Ronkonkoma", "20"),
+        ("5:26", "Hempstead", "17"), ("5:31", "Huntington", "21"), ("5:34", "Far Rockaway", "14"),
+        ("5:40", "Long Beach", "18"), ("5:43", "Montauk", "16"), ("5:49", "Oyster Bay", "15"))
+for i, (t, dest, trk) in enumerate(rows):
+    y = 80 + i * 48
+    dr.text((8, y), t, font=font(22), fill=(255, 190, 40), anchor="lm")
+    dr.text((70, y), dest, font=font(20), fill=(255, 190, 40), anchor="lm")
+    dr.text((246, y), trk, font=font(22), fill=(255, 255, 255), anchor="rm")
+    dr.line((6, y + 22, 250, y + 22), fill=(40, 40, 44), width=2)
+save(np.asarray(im, float), "depboard", UNLIT, surf="metal", model=True)
+
+# Ticket machine front: brushed steel, a blue touch screen, card slot and ticket tray.
+im = Image.new("RGB", (256, 512), (150, 154, 160))
+dr = ImageDraw.Draw(im)
+dr.rectangle((0, 0, 255, 40), fill=(20, 40, 150))
+dr.text((128, 21), "LIRR Tickets", font=font(24), fill=(255, 255, 255), anchor="mm")
+dr.rectangle((28, 70, 228, 230), fill=(25, 25, 28))
+dr.rectangle((36, 78, 220, 222), fill=(40, 110, 200))
+dr.text((128, 120), "Touch to start", font=font(20), fill=(255, 255, 255), anchor="mm")
+dr.rectangle((60, 260, 196, 276), fill=(30, 30, 32))
+dr.rectangle((150, 300, 220, 340), fill=(40, 40, 44))
+dr.rectangle((50, 380, 206, 430), fill=(35, 35, 38))
+save(np.asarray(im, float), "tvm_front", UNLIT, surf="metal", model=True)

@@ -150,6 +150,9 @@ def lirr(W, E):
         if MX - 24 < x < PX1 + 24:
             continue
         W(box(x - 15, COLY - 15, LZ, x + 15, COLY + 15, CC, TEX_COL))
+        if not PX0 < x < PX1:
+            E(ent("prop_static", (x, COLY, LZ), model="models/pennmodern/colboard.mdl", angles="0 90 0",
+                  disableshadows="1"))
         if PX0 < x < PX1:
             W(box(x - 15, COLY - 15, CC, x + 15, COLY + 15, PZ, TEX_WWHITE))
     # Street-level mezzanine at the east end of the pavilion (33rd Street entrance, sealed until area 6),
@@ -164,6 +167,11 @@ def lirr(W, E):
     W(box(PX0, CY - 4, LZ, MX, CY, LZ + 14 * FT, TEX_SHOP))
     vmf_lib.FACEUV[TEX_SIGN] = sign_uv
     W(box(PX0 + 300, -CY, PZ - 120, PX0 + 304, -CY + 480, PZ - 60, TEX_SIGN))
+    # Ticket machines in banks of four on the south wall, screens facing into the concourse.
+    for xb in (CX0 + 600, CX0 + 2400, PX0 + 120):
+        for k in range(4):
+            E(ent("prop_static", (xb + k * 40, -CY, LZ), model="models/pennmodern/tvm.mdl", angles="0 90 0",
+                  disableshadows="1"))
     # Lights: a row down each ceiling, cool fill under the light box.
     for x in range(CX0 + 180, CX1, 360):
         if PX0 < x < PX1:

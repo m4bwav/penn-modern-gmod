@@ -47,11 +47,12 @@ for r in clip: rect(r, (175, 175, 175))
 for r in hall: rect(r, LEVELS[0][1])
 for x, y in spawn:
     cx, cy = P(x, y); d.ellipse((cx-10, cy-10, cx+10, cy+10), fill=(200, 40, 40)); d.text((cx+14, cy-12), "spawn", fill=(200, 40, 40), font=f)
-for lbl, x, y in (("Moynihan Train Hall", 0, 520), ("Escalators down", 0, 0), ("Stairs to balcony", -1000, -860),
+for lbl, x, y in (("Moynihan Train Hall", 0, 520), ("Escalators down", 0, 0), ("Stairs to balcony", -700, -640),
                   ("Side hall and shops (balcony over)", 300, -800), ("Side hall and shops", 300, 800),
-                  ("West End Concourse below (blue)", 0, -420), ("Eighth Avenue (east)", 1000, 0)):
+                  ("West End Concourse below (blue)", 0, -420), ("Under Eighth Avenue", 1620, 330), ("LIRR concourse (blue)", 3000, 250),
+                  ("33rd St pavilion, escalator up", 4800, -500)):
     cx, cy = P(x, y); w = d.textlength(lbl, font=f); d.rectangle((cx-w/2-6, cy-16, cx+w/2+6, cy+14), fill=(255, 255, 255)); d.text((cx-w/2, cy-13), lbl, fill=(30, 30, 30), font=f)
 d.text((60, 30), "gm_penn_modern: rough plan", fill=(30, 30, 30), font=fb)
-d.text((60, 78), f"dark = hall level at chest height, blue = concourse 30 ft below, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
+d.text((60, 78), f"dark = hall level at chest height, blue = concourses 30 ft below, grey = escalators   |   grid 50 ft   |   {round((x1-x0)/FT)} x {round((y1-y0)/FT)} ft   |   N up", fill=(80, 80, 80), font=f)
 d.text((60, H-45), "Generated from src/gm_penn_modern.vmf by tools/make_map.py", fill=(120, 120, 120), font=f)
 OUT.parent.mkdir(parents=True, exist_ok=True); img.save(OUT); print("wrote", OUT, len(hall), len(lower), len(clip))

@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/pennmodern/depboard"
+	"$surfaceprop" "metal"
+	"$model" "1"
+}

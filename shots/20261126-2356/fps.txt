@@ -1,0 +1,4 @@
+hall_west       146 fps
+lirr_west       146 fps
+pavilion        146 fps
+lirr_east       146 fps

@@ -1,14 +1,14 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-26 (session 8)
+Updated: 2026-11-27 (session 9)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
-- Chain: session 8 of 40
+- Chain: session 9 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
 - Workshop ID: 3846578407 (public, created session 7; default in tools/package.sh). Updates: sh tools/package.sh "note" [previews].
-- Version: 0.1.0 (tag v0.1.0, Moynihan Train Hall).
+- Version: 0.2.0 (tag v0.2.0, Moynihan + LIRR concourse).
 
 ## Grants
 - Driver: chain_loop.py, PID 381748 (started 2026-11-26 21:35, chainwright 0.16.0 chain_loop.py, stdout/stderr C:/Users/m4bwa/.chainwright/penn-modern-driver.out/.err), prompt copy C:/Users/m4bwa/.chainwright/penn-modern-prompt.md, stop check C:/Users/m4bwa/.chainwright/penn_modern_stop.py, log C:/Users/m4bwa/.chainwright/penn-modern-chain.log, ledger C:/Users/m4bwa/.chainwright/penn-modern-ledger.json. Bounds: 40 sessions, 24 h, 180 min per session, limit wait 1800 s x 12, retry failed 1. Sessions it starts never start another driver.
@@ -31,8 +31,10 @@ Updated: 2026-11-26 (session 8)
 
 - Session 8 (branch s8-lirr): area 2 blockout. 9 LIRR refs in refs/SOURCES.md, ai-docs/notes/lirr-dimensions.md. build_vmf.py lirr(): a 30 x 12 ft passage under Eighth Avenue through an opening in the West End stub's east wall, the 57 ft wide, 18 ft LIRR corridor (400 ft slice, wood-slat and white ceilings split by a row of white-to-blue columns), the 33rd Street pavilion (40 ft lit coffer ceiling, shops, wayfinding band, escalator to a sealed street-level mezzanine). Textures floor_granite, ceil_wood, ceil_white, lightbox, column_blue, wall_white, sign_band. Full compile: vertexes 1694, faces 1220, brushes 151, BSP 6.5 MB; walk 7/7 PASS (to_lirr, esc_lirr_up new); shots/20261126-2345 all 146 fps, 5 new cams (passage, lirr_west, pavilion, lirr_east, mezz).
 
+- Session 9 (branch s9-lirr-detail): white ceiling fixed ($selfillum on LightmappedGeneric did nothing in game; ceil_white and lightbox are now UnlitGeneric, ceil_white has linear light strips). _box() in pm_models.py had v flipped (text read upside down; the clock dial was flipped too). New MDLs colboard (departure boards back to back on each corridor column) and tvm (ticket machines, 3 banks of 4 on the south wall), textures depboard and tvm_front. compare.py has a "lirr" set (python tools/compare.py shots/<stamp> lirr). Level map labels LIRR. Full compile: vertexes 1681, faces 1210, brushes 151, BSP 6.6 MB; walk 7/7 PASS; shots/20261127-0001 all 146 fps. 0.2.0: README, Workshop description + update (EResult 1), licence-audit-0.2.0.md, tag and release.
+
 ## Next
-1. Session 9: LIRR detail. The white ceiling (ceil_white) renders dark grey even with $selfillum: find out why (lightmap, alpha mask, or the face) and fix. Slat scale, departure boards on the columns, ticket machines and benches as MDL, the LIRR ticket office, compare.jpg pairs for the LIRR refs (compare.py crashed on this run). Then 0.2.0 (README, level map, Workshop update, tag, release).
+1. Session 10: area 3, the Amtrak concourse (refs on Commons, CC0/BY/BY-SA only, logged; dimensions note; blockout joined to the LIRR corridor through a real opening; walk route; shots). Leftover LIRR polish when convenient: benches, the LIRR ticket office, TVMs not yet seen in any shot cam (add a cam on the south wall bank at x ~2640).
 2. Wiki: still no repo until a first page is saved at https://github.com/m4bwav/penn-modern-gmod/wiki/_new in a signed-in browser; then wikiwright.
 
 ## Waiting on Mark
