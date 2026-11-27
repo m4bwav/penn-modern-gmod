@@ -4,10 +4,10 @@ import os
 import sys
 from PIL import Image, ImageDraw
 
-PAIRS = {  # shot -> refs/photos file (HABS NY-5471, waiting room)
-    "from_sw": "WAITING_ROOM_FROM_SOUTHWEST_Pennsylvania_Station.jpg",
-    "from_nw": "WAITING_ROOM_FROM_NORTHWEST_Pennsylvania_Station.jpg",
-    "stair_east": "STAIRWAY_FROM_WAITING_ROOM_TO_ARCADE_Pennsylvania_Station.jpg",
+PAIRS = {  # shot -> refs/photos file (Moynihan Train Hall, Commons, refs/SOURCES.md)
+    "hall_west": "Moynihan_Train_Hall_viewed_from_center_of_floor_Dec_27_2022.jpg",
+    "hall_up": "The_92_Foot_High_Skylight_supported_by_the_original_steel_tr.jpg",
+    "side_south": "Moynihan_Train_Hall_interior_Dec_27_2022.jpg",
 }
 LOWER, PLAT, CHAMBERS = {}, {}, {}  # later areas add their pairs here
 d, W, H = sys.argv[1], 640, 400

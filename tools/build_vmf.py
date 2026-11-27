@@ -9,6 +9,7 @@ Run: python tools/build_vmf.py
 """
 from pathlib import Path
 
+import vmf_lib
 from vmf_lib import box, ent, nid, yprism, _id
 
 FT = 12
@@ -29,9 +30,15 @@ LX, LY = 70 * FT, 40 * FT
 WX = 28 * FT                              # escalator wells run x = -WX..WX
 WELLS = ((-26 * FT, -14 * FT), (14 * FT, 26 * FT))   # y ranges of the two wells
 TRUSS_X = (-50 * FT, 0, 50 * FT)          # 3 transverse trusses, 4 bays (counted in the CC0 wide shots)
-TEX_FLOOR = "dev/dev_measuregeneric01b"
-TEX_WALL = "dev/dev_measurewall01a"
-TEX_TRIM = "dev/dev_measuregeneric01"
+TEX_FLOOR = "pennmodern/floor_marble"     # tools/pm_textures.py
+TEX_WALL = "pennmodern/wall_stone"
+TEX_TRIM = "pennmodern/trim_dark"
+TEX_SHOP = "pennmodern/storefront"
+BOARDS = ("pennmodern/board_name", "pennmodern/board_info")
+# Board textures are 1024 x 512 mapped once onto a 30 x 15 ft face (360 x 180 u): faces start on
+# multiples of 360 in x and 180 in z so the texture origin lines up.
+vmf_lib.SCALE.update({TEX_FLOOR: 0.375, TEX_WALL: 0.5, TEX_TRIM: 0.25, TEX_SHOP: 0.375,
+                      BOARDS[0]: 0.3515625, BOARDS[1]: 0.3515625})
 TEX_GLASS = "glass/glasswindow007a"
 TEX_SKY = "tools/toolsskybox"
 
@@ -70,6 +77,17 @@ def lower(W):
         W(yprism(poly, y0, y1, TEX_TRIM))
 
 
+def board_uv(x0, s=0.3515625):
+    # Read left to right from the hall: a face with normal +y is seen looking -y, so its right is -x.
+    # Shift puts the board's left edge on the texture's left edge. Built per face, so the end faces
+    # (x normals) just get a sliver of it.
+    def uv(n):
+        sx = -1 if n[1] > 0 else 1
+        left = x0 if sx > 0 else -(x0 + 360)
+        return "[%d 0 0 %g] %g" % (sx, -left / s, s), "[0 0 -1 0] %g" % s
+    return uv
+
+
 def side_halls(W, E):
     # Under each balcony: piers every 25 ft along the edge, the balcony slab, a glass rail,
     # storefront back wall; above it the wall band runs up to the truss springing.
@@ -85,6 +103,14 @@ def side_halls(W, E):
         # Wall band between balcony and springing, set back over the balcony (glazed upper floor later).
         wa, wb = sorted((sgn * (HY - 8 * FT), sgn * HY))
         W(box(-HX, wa, BALC + 18 + 10 * FT, HX, wb, SPRING, TEX_WALL))
+        # Lit shop fronts on the back wall under the balcony, between the end walls.
+        sa, sb = sorted((sgn * (HY - 4), sgn * HY))
+        W(box(-HX, sa, 0, HX, sb, BALC, TEX_SHOP))
+        # LED boards hung in front of the wall band, 30 x 15 ft.
+        ba, bb = sorted((sgn * (HY - 8 * FT - 8), sgn * (HY - 8 * FT)))
+        for x0, tex in ((-720, BOARDS[0]), (360, BOARDS[1])):
+            vmf_lib.FACEUV[tex] = board_uv(x0)
+            W(box(x0, ba, 360, x0 + 360, bb, 540, tex))
         E(ent("light", (0, sgn * (HY - SIDE // 2), BALC - 24), _light="255 240 215 120"))
         E(ent("light", (0, sgn * (HY - 4 * FT), BALC + 8 * FT), _light="255 240 215 80"))
 
@@ -95,6 +121,8 @@ def props(E):
         E(ent("prop_static", (x, 0, SPRING), model="models/pennmodern/truss.mdl", angles="0 90 0", solid="0",
               disableshadows="1"))
     E(ent("prop_static", (0, 0, SPRING), model="models/pennmodern/purlins.mdl", angles="0 90 0", solid="0",
+          disableshadows="1"))
+    E(ent("prop_static", (0, 0, SPRING), model="models/pennmodern/skylight.mdl", angles="0 90 0", solid="0",
           disableshadows="1"))
     E(ent("prop_static", (0, 0, H - 4 * FT), model="models/pennmodern/clock.mdl", angles="0 0 0",
           solid="6"))

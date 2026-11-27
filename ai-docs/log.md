@@ -9,3 +9,5 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - 15 Commons refs (refs/SOURCES.md), notes/moynihan-dimensions.md, box sized 200x155x92 ft, compile loads (141 verts), shots 146 fps. The GMod lock waited out penn-gmod's shots without trouble.
 ## [2026-11-26] add | session 2: Moynihan blockout
 - Wells, lower stub, side halls, balcony, truss/purlin/clock MDL (yaw 90 for studiomdl's axis swap). 688 verts, 146 fps.
+## [2026-11-26] add | session 3: Moynihan materials, skylight glass, boards
+- pm_textures.py rewritten for Moynihan and run by compile.sh; skylight.mdl translucent vault; shop fronts; LED boards need per-face UVs (u=+x reads mirrored on the +y-facing face). 756 verts, 146 fps, BSP 13.2 MB.

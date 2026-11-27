@@ -1,116 +1,154 @@
-"""Procedural waiting-room materials, tones judged by eye from the HABS photos
-(refs/photos/WAITING_ROOM_FROM_SOUTHWEST..., NORTHWEST...): warm grey travertine ashlar,
-a coffered vault of round coffers in square frames, pale travertine floor slabs.
-Writes src/materials/pennmodern/<name>.vtf + .vmt and previews in shots/tex/.
-Needs pip srctools pillow numpy."""
+"""Procedural Moynihan Train Hall materials, tones judged by eye from the CC0 wide shots
+(refs/photos/Moynihan_Train_Hall_viewed_from_center_of_floor_Dec_27_2022.jpg and _interior_*):
+pale grey-beige marble floor in long slabs, pale grey stone wall panels, charcoal metal trim,
+lit storefront glazing, the skylight's glass grid (translucent, for the skylight model),
+the clock dial and the blue LED boards on the side walls.
+Brush materials -> src/materials/pennmodern/, model materials -> src/materials/models/pennmodern/,
+previews in shots/tex/. Needs pip srctools pillow numpy. Run through tools/compile.sh."""
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from srctools import vtf
 
 N = 512
 ROOT = Path(__file__).resolve().parent.parent
 MAT = ROOT / "src" / "materials" / "pennmodern"
-rng = np.random.default_rng(1910)
+MMAT = ROOT / "src" / "materials" / "models" / "pennmodern"
+rng = np.random.default_rng(2021)
 
 
-def fbm(n, octaves=5):
+def fbm(n, octaves=5, m=None):
     # Seamless fbm: tile each random grid 3x3, resize, keep the middle tile.
-    out = np.zeros((n, n))
+    m = m or n
+    out = np.zeros((m, n))
     for o in range(octaves):
         k = 3 * 2**o
         g = np.tile(rng.random((k, k)), (3, 3))
-        img = Image.fromarray((g * 255).astype(np.uint8)).resize((3*n, 3*n), Image.BICUBIC)
-        out += (np.asarray(img, float)[n:2*n, n:2*n] / 255 - .5) / 2**o
+        img = Image.fromarray((g * 255).astype(np.uint8)).resize((3*n, 3*m), Image.BICUBIC)
+        out += (np.asarray(img, float)[m:2*m, n:2*n] / 255 - .5) / 2**o
     return out
 
 
-def save(img, name, surf="stone"):
+def save(img, name, vmt=None, surf="stone", alpha=None, model=False):
     rgb = np.clip(img, 0, 255).astype(np.uint8)
+    h, w = rgb.shape[:2]
     (ROOT / "shots" / "tex").mkdir(parents=True, exist_ok=True)
-    Image.fromarray(rgb).save(ROOT / "shots" / "tex" / f"{name}.png")
-    tex = vtf.VTF(N, N, fmt=vtf.ImageFormats.RGB888)
-    tex.get().copy_from(np.dstack([rgb, np.full((N, N), 255, np.uint8)]).tobytes(), vtf.ImageFormats.RGBA8888)
+    a = np.full((h, w), 255, np.uint8) if alpha is None else np.clip(alpha, 0, 255).astype(np.uint8)
+    Image.fromarray(np.dstack([rgb, a]) if alpha is not None else rgb).save(ROOT / "shots" / "tex" / f"{name}.png")
+    tex = vtf.VTF(w, h, fmt=vtf.ImageFormats.RGBA8888 if alpha is not None else vtf.ImageFormats.RGB888)
+    tex.get().copy_from(np.dstack([rgb, a]).tobytes(), vtf.ImageFormats.RGBA8888)
     tex.compute_mipmaps()
-    MAT.mkdir(parents=True, exist_ok=True)
-    with open(MAT / f"{name}.vtf", "wb") as f:
+    d, path = (MMAT, "models/pennmodern") if model else (MAT, "pennmodern")
+    d.mkdir(parents=True, exist_ok=True)
+    with open(d / f"{name}.vtf", "wb") as f:
         tex.save(f)
-    (MAT / f"{name}.vmt").write_text('"LightmappedGeneric"\n{\n\t"$basetexture" "pennmodern/%s"\n\t"$surfaceprop" "%s"\n}\n'
-                                     % (name, surf), encoding="ascii", newline="\n")
+    vmt = vmt or '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n}\n'
+    (d / f"{name}.vmt").write_text(vmt % (f"{path}/{name}", surf), encoding="ascii", newline="\n")
     print("wrote", name)
 
 
-def pits(img, count, tone):
-    # Travertine voids: small dark elongated pits along the bedding.
-    y, x = np.mgrid[0:N, 0:N]
-    for _ in range(count):
-        cx, cy = rng.integers(0, N, 2)
-        rx, ry = rng.uniform(2, 7), rng.uniform(0.8, 1.8)
-        d = ((x - cx + N/2) % N - N/2)**2 / rx**2 + ((y - cy + N/2) % N - N/2)**2 / ry**2
-        img[d < 1] *= tone
-    return img
-
-
-TRAV = np.array([122, 112, 98], float)   # session 5: photos read mid-grey, darker than 150
 yy, xx = np.mgrid[0:N, 0:N]
-bed = np.sin(yy / N * 2*np.pi * 18 + fbm(N, 4) * 6)
 
-# Ashlar: 4 courses x 2 blocks per tile, half-block offset, thin light joints, horizontal bedding.
+
+def font(size):
+    for f in ("arialbd.ttf", "arial.ttf", "DejaVuSans-Bold.ttf"):
+        try:
+            return ImageFont.truetype(f, size)
+        except OSError:
+            pass
+    return ImageFont.load_default()
+
+
+# Floor: long pale grey-beige marble slabs, 4 across x 2 down per tile, running bond, soft veins.
+FL = np.array([176, 170, 160], float)
 img = np.zeros((N, N, 3))
-ch, bw = N // 4, N // 2
-for c in range(4):
-    off = (bw // 2) * (c % 2)
+sw, sh = N // 2, N // 4
+for r in range(4):
+    off = (sw // 2) * (r % 2)
     for b in range(3):
-        x0, x1 = max(0, b*bw - off), min(N, (b+1)*bw - off)
+        x0, x1 = max(0, b*sw - off), min(N, (b+1)*sw - off)
         if x1 > x0:
-            img[c*ch:(c+1)*ch, x0:x1] = TRAV * (1 + rng.uniform(-.05, .05)) * [1, 1 + rng.uniform(-.02, .02), 1 + rng.uniform(-.04, .02)]
-img *= (1 + fbm(N, 6) * 0.10 + bed * 0.025)[..., None]
-img = pits(img, 260, 0.78)
-for c in range(4):
-    img[c*ch:c*ch+3] = img[c*ch:c*ch+3] * 0.55 + TRAV * 1.1 * 0.45
-    off = (bw // 2) * (c % 2)
+            img[r*sh:(r+1)*sh, x0:x1] = FL * (1 + rng.uniform(-.05, .05))
+vein = np.abs(np.sin((xx * 0.6 + yy) / N * 2*np.pi * 3 + fbm(N, 5) * 9))
+img *= (1 + fbm(N, 6) * 0.06 - (vein < 0.06) * 0.08)[..., None]
+for r in range(4):
+    img[r*sh:r*sh+2] *= 0.72
+    off = (sw // 2) * (r % 2)
     for b in range(3):
-        x = (b*bw - off) % N
-        img[c*ch:(c+1)*ch, x:x+3] = img[c*ch:(c+1)*ch, x:x+3] * 0.55 + TRAV * 1.1 * 0.45
-save(img, "travertine_ashlar")
+        x = (b*sw - off) % N
+        img[r*sh:(r+1)*sh, x:x+2] *= 0.72
+save(img, "floor_marble", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$envmap" "env_cubemap"\n\t"$envmaptint" "[0.12 0.12 0.12]"\n}\n')
 
-# Plain dressed travertine for trim, entablature and pedestals: no joints.
-img = TRAV * 1.05 * (1 + fbm(N, 6) * 0.08 + bed * 0.02)[..., None]
-save(pits(img, 160, 0.8), "travertine")
+# Wall: pale grey stone panels, 2 x 2 per tile, fine joints.
+ST = np.array([168, 166, 160], float)
+img = ST * (1 + fbm(N, 6) * 0.07)[..., None]
+for k in range(0, N, N // 2):
+    img[k:k+2] *= 0.7
+    img[:, k:k+2] *= 0.7
+save(img, "wall_stone")
 
-# Vault: round coffers in octagonal frames on a diagonal lattice (session 5, matching the
-# HABS photos), four per tile at the square corners and centre, rosette in each.
-PLAS = np.array([170, 160, 144], float)
-img = PLAS * (1 + fbm(N, 5) * 0.06)[..., None]
-cell = N // 2
-u, w = (xx + cell/2) % cell - cell/2, (yy + cell/2) % cell - cell/2
-u2, w2 = xx % cell - cell/2, yy % cell - cell/2
-pick = np.hypot(u, w) > np.hypot(u2, w2)
-u, w = np.where(pick, u2, u), np.where(pick, w2, w)
-r = np.hypot(u, w)
-octo = np.maximum(np.maximum(abs(u), abs(w)), (abs(u) + abs(w)) / np.sqrt(2))
-shade = np.ones_like(r)
-shade = np.where(octo < 84, 0.86, shade)              # octagonal frame, first step
-shade = np.where(r < 70, 0.62, shade)                 # deep round coffer
-shade = np.where((r < 70) & (r > 62), 0.78, shade)
-shade = np.where((r < 62) & (r > 55), 0.9, shade)
-shade = np.where((octo >= 84) & (octo < 90), 1.12, shade)  # lit rib edge
-img *= shade[..., None]
-img[(r < 70) & (w < -0.3 * r)] *= 0.9                # top lip casts shadow downward
-ros = np.clip((16 - r) / 4, 0, 1) * (0.8 + 0.2 * np.cos(np.arctan2(w, u) * 8))
-img = img * (1 - ros[..., None]) + PLAS * 1.15 * ros[..., None]
-save(img, "vault_coffer", "plaster")
+# Trim: charcoal painted steel / metal panel, the colour of the trusses' surrounds and piers.
+img = np.array([78, 80, 84], float) * (1 + fbm(N, 6) * 0.05)[..., None]
+for k in range(0, N, N // 4):
+    img[k:k+2] *= 0.75
+save(img, "trim_dark", surf="metal")
 
-# Floor: 2x2 pale travertine slabs with dark joints.
-FL = np.array([168, 160, 146], float)
+# Storefront: warm lit shops behind glass, 2 bays per tile with mullions and a dark fascia band.
 img = np.zeros((N, N, 3))
-for i in range(2):
-    for j in range(2):
-        img[i*cell:(i+1)*cell, j*cell:(j+1)*cell] = FL * (1 + rng.uniform(-.04, .04))
-img *= (1 + fbm(N, 6) * 0.08 + bed * 0.015)[..., None]
-img = pits(img, 120, 0.85)
-for k in (0, cell):
-    img[k:k+2] *= 0.6
-    img[:, k:k+2] *= 0.6
-save(img, "floor_travertine")
+img[:] = [214, 190, 150]
+img *= (0.75 + 0.5 * fbm(N, 4)[..., None] + 0.25 * (yy / N)[..., None])
+img[: N // 6] = [40, 42, 46]                               # fascia
+img[N // 6: N // 6 + 6] = [235, 220, 190]                  # cove light strip
+for k in (0, N // 2):
+    img[:, k:k+10] = [55, 57, 60]                          # mullions
+img[N - 12:] = [55, 57, 60]
+save(img, "storefront", '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$selfillum" "1"\n\t"$envmap" "env_cubemap"\n\t"$envmaptint" "[0.2 0.2 0.2]"\n}\n', surf="glass")
+
+# Skylight glass for the skylight model: one 6 ft square cell per half tile with a thin diagonal
+# grid, steel mullions opaque, glass mostly clear and slightly blue-white.
+img = np.zeros((N, N, 3)) + [205, 220, 235]
+al = np.full((N, N), 70.0)
+c = N // 2
+mul = ((xx % c) < 8) | ((yy % c) < 8)
+diag = (np.abs((xx % c) - (yy % c)) < 2) | (np.abs((xx % c) + (yy % c) - c) < 2)
+img[mul] = [92, 95, 100]
+al[mul] = 255
+img[diag & ~mul] = [130, 134, 140]
+al[diag & ~mul] = 200
+save(img, "skylight", '"VertexLitGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$translucent" "1"\n\t"$nocull" "1"\n\t"$model" "1"\n}\n', surf="glass", alpha=al, model=True)
+
+# Clock dial: cream face, black hour marks and hands at 10:08.
+img = np.zeros((N, N, 3)) + [236, 230, 212]
+im = Image.fromarray(img.astype(np.uint8))
+dr = ImageDraw.Draw(im)
+cx = N / 2
+dr.ellipse((14, 14, N - 14, N - 14), outline=(30, 30, 32), width=10)
+for k in range(60):
+    a = np.pi * 2 * k / 60
+    r0 = cx - 50 if k % 5 == 0 else cx - 36
+    dr.line((cx + r0*np.sin(a), cx - r0*np.cos(a), cx + (cx-26)*np.sin(a), cx - (cx-26)*np.cos(a)),
+            fill=(25, 25, 28), width=12 if k % 5 == 0 else 3)
+for frac, ln, wd in ((10/12 + 8/720, 0.5, 16), (8/60, 0.75, 10)):
+    a = 2 * np.pi * frac
+    dr.line((cx, cx, cx + ln*cx*np.sin(a), cx - ln*cx*np.cos(a)), fill=(20, 20, 22), width=wd)
+dr.ellipse((cx - 14, cx - 14, cx + 14, cx + 14), fill=(20, 20, 22))
+save(np.asarray(im, float), "clockface", '"UnlitGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+     '\t"$model" "1"\n}\n', surf="metal", model=True)
+
+# LED boards on the side walls (the big blue screens over the balcony): one 1024 x 512 board per
+# face, mapped once by build_vmf.py's SCALE (30 x 15 ft).
+for name, text in (("board_name", "MOYNIHAN\nTRAIN HALL"), ("board_info", "Ticketed Waiting Room")):
+    W2 = 1024
+    g = np.linspace(0, 1, W2)[None, :, None]
+    img = np.zeros((N, W2, 3)) + [28, 52, 120] * (0.85 + 0.3 * g)
+    img[:10] = img[-10:] = img[:, :10] = img[:, -10:] = [20, 20, 22]
+    im = Image.fromarray(img.astype(np.uint8))
+    dr = ImageDraw.Draw(im)
+    f = font(120 if "\n" in text else 80)
+    dr.multiline_text((W2 / 2, N / 2), text, font=f, fill=(240, 240, 245), anchor="mm", align="center", spacing=20)
+    save(np.asarray(im, float), name, '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+         '\t"$selfillum" "1"\n}\n', surf="glass")
