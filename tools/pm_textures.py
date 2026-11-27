@@ -36,7 +36,7 @@ def save(img, name, vmt=None, surf="stone", alpha=None, model=False):
     (ROOT / "shots" / "tex").mkdir(parents=True, exist_ok=True)
     a = np.full((h, w), 255, np.uint8) if alpha is None else np.clip(alpha, 0, 255).astype(np.uint8)
     Image.fromarray(np.dstack([rgb, a]) if alpha is not None else rgb).save(ROOT / "shots" / "tex" / f"{name}.png")
-    tex = vtf.VTF(w, h, fmt=vtf.ImageFormats.RGBA8888 if alpha is not None else vtf.ImageFormats.RGB888)
+    tex = vtf.VTF(w, h, fmt=vtf.ImageFormats.DXT5 if alpha is not None else vtf.ImageFormats.DXT1)   # DXT cuts the BSP ~6x
     tex.get().copy_from(np.dstack([rgb, a]).tobytes(), vtf.ImageFormats.RGBA8888)
     tex.compute_mipmaps()
     d, path = (MMAT, "models/pennmodern") if model else (MAT, "pennmodern")

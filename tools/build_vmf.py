@@ -100,9 +100,12 @@ def side_halls(W, E):
         W(box(-HX, y0, BALC, HX, y1, BALC + 18, TEX_TRIM))
         ra, rb = sorted((edge, edge - sgn * 2))
         W(box(-HX, ra, BALC + 18, HX, rb, BALC + 18 + 42, TEX_GLASS))
-        # Wall band between balcony and springing, set back over the balcony (glazed upper floor later).
+        # Over the balcony: a lit, glazed upper floor (shop and office fronts), then the wall band
+        # up to the truss springing, both set back 8 ft.
         wa, wb = sorted((sgn * (HY - 8 * FT), sgn * HY))
-        W(box(-HX, wa, BALC + 18 + 10 * FT, HX, wb, SPRING, TEX_WALL))
+        up = BALC + 18 + 14 * FT
+        W(box(-HX, wa, BALC + 18, HX, wb, up, TEX_SHOP))
+        W(box(-HX, wa, up, HX, wb, SPRING, TEX_WALL))
         # Lit shop fronts on the back wall under the balcony, between the end walls.
         sa, sb = sorted((sgn * (HY - 4), sgn * HY))
         W(box(-HX, sa, 0, HX, sb, BALC, TEX_SHOP))
