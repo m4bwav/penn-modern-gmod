@@ -28,3 +28,6 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - ceil_white with $selfillum still renders dark grey in game; not solved yet.
 ## [2026-11-27] add | session 9: LIRR detail, 0.2.0
 - $selfillum on LightmappedGeneric brushes did not brighten ceil_white in game (tint or not); UnlitGeneric does. _box() UVs were v-flipped (text upside down). colboard + tvm MDLs, compare.py lirr set. 1681 verts, 6.6 MB, 146 fps, walk 7/7. Workshop 3846578407 updated, v0.2.0.
+## [2026-11-27] add | session 10: Amtrak concourse, 0.3.0
+- 7 Commons refs, amtrak-dimensions.md, amtrak(): hall one level above the LIRR, stair up through the LIRR south wall, halo columns (amcol.mdl), louvred unlit ceiling, departures board, ticket counters, waiting room (seats.mdl), escalator to a sealed track landing. 2143 verts, 8.0 MB, 146 fps, walk 10/10. Workshop 3846578407 updated, v0.3.0.
+- tvm.mdl: with yaw 90 its +y screen faced the wall and the origin on the wall face lit it black. A model's SMD +y face points -y in the world at yaw 90; keep prop origins off brush faces.

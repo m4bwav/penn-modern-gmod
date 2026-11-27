@@ -1,14 +1,14 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-27 (session 9)
+Updated: 2026-11-27 (session 10)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
-- Chain: session 9 of 40
+- Chain: session 10 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
 - Workshop ID: 3846578407 (public, created session 7; default in tools/package.sh). Updates: sh tools/package.sh "note" [previews].
-- Version: 0.2.0 (tag v0.2.0, Moynihan + LIRR concourse).
+- Version: 0.3.0 (tag v0.3.0, Moynihan + LIRR + Amtrak concourses).
 
 ## Grants
 - Driver: chain_loop.py, PID 381748 (started 2026-11-26 21:35, chainwright 0.16.0 chain_loop.py, stdout/stderr C:/Users/m4bwa/.chainwright/penn-modern-driver.out/.err), prompt copy C:/Users/m4bwa/.chainwright/penn-modern-prompt.md, stop check C:/Users/m4bwa/.chainwright/penn_modern_stop.py, log C:/Users/m4bwa/.chainwright/penn-modern-chain.log, ledger C:/Users/m4bwa/.chainwright/penn-modern-ledger.json. Bounds: 40 sessions, 24 h, 180 min per session, limit wait 1800 s x 12, retry failed 1. Sessions it starts never start another driver.
@@ -33,8 +33,10 @@ Updated: 2026-11-27 (session 9)
 
 - Session 9 (branch s9-lirr-detail): white ceiling fixed ($selfillum on LightmappedGeneric did nothing in game; ceil_white and lightbox are now UnlitGeneric, ceil_white has linear light strips). _box() in pm_models.py had v flipped (text read upside down; the clock dial was flipped too). New MDLs colboard (departure boards back to back on each corridor column) and tvm (ticket machines, 3 banks of 4 on the south wall), textures depboard and tvm_front. compare.py has a "lirr" set (python tools/compare.py shots/<stamp> lirr). Level map labels LIRR. Full compile: vertexes 1681, faces 1210, brushes 151, BSP 6.6 MB; walk 7/7 PASS; shots/20261127-0001 all 146 fps. 0.2.0: README, Workshop description + update (EResult 1), licence-audit-0.2.0.md, tag and release.
 
+- Session 10 (branch s10-amtrak): area 3, the Amtrak (old main) concourse. 7 refs (CC0 / CC BY / BY-SA) in refs/SOURCES.md, ai-docs/notes/amtrak-dimensions.md. build_vmf.py amtrak(): 240 x 150 ft hall at z -240 (one level above the LIRR, cited) south of the LIRR corridor, joined by a 16 ft stair through the LIRR south wall (x 2928..3120); louvred 14 ft ceiling (ceil_amtrak, unlit) with a raised white centre, amcol.mdl blue columns with light halos, amboard departures board, ticket counters, glazed waiting room with seats.mdl rows, escalator well down to a sealed landing 30 ft below (for area 5). LIRR TVMs fixed: they were black and faced the wall (yaw 270, origin 20 u off the wall). Full compile: vertexes 2143, faces 1513, brushes 199, BSP 8.0 MB; walk 10/10 PASS (to_amtrak, esc_amtrak_down/up new); shots/20261127-0013 all 146 fps (+ -0019 tvm). 0.3.0: README, level map (Amtrak in green), licence-audit-0.3.0.md, Workshop update (EResult 1), tag and release.
+
 ## Next
-1. Session 10: area 3, the Amtrak concourse (refs on Commons, CC0/BY/BY-SA only, logged; dimensions note; blockout joined to the LIRR corridor through a real opening; walk route; shots). Leftover LIRR polish when convenient: benches, the LIRR ticket office, TVMs not yet seen in any shot cam (add a cam on the south wall bank at x ~2640).
+1. Session 11: area 4, the NJ Transit concourse (near Seventh Avenue, first level below the street, cited; east of the Amtrak hall). Refs on Commons first (CC0/BY/BY-SA, logged), dimensions note, blockout joined to the Amtrak hall through a real opening (east wall x 4880), walk route, shots. Leftover polish: Amtrak waiting-room glass (glasswindow007a looks dirty up close; a cleaner glass VMT), LIRR benches and ticket office.
 2. Wiki: still no repo until a first page is saved at https://github.com/m4bwav/penn-modern-gmod/wiki/_new in a signed-in browser; then wikiwright.
 
 ## Waiting on Mark

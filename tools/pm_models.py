@@ -34,6 +34,10 @@ VMTS = {
               '\t"$surfaceprop" "rubber"\n}\n',
     "escglass": '"VertexLitGeneric"\n{\n\t"$basetexture" "glass/glasswindow007a"\n\t"$translucent" "1"\n'
                 '\t"$nocull" "1"\n\t"$surfaceprop" "glass"\n}\n',
+    "amblue": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.2 0.36 0.68]"\n'
+              '\t"$surfaceprop" "metal"\n}\n',
+    "seat": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.09 0.09 0.1]"\n'
+            '\t"$surfaceprop" "plastic"\n}\n',
     "clockcase": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.12 0.12 0.13]"\n'
                  '\t"$surfaceprop" "metal"\n}\n',
 }
@@ -225,7 +229,31 @@ def tvm():
     return m
 
 
-MODELS = {"colboard": colboard, "tvm": tvm, "escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
+def amcol():
+    """An Amtrak concourse column: 3 ft round, pale blue, 14 ft to the ceiling, with the ring of
+    lights (halo) round it just under the ceiling. Origin: column centre at the floor."""
+    m = Mesh()
+    m.cyl("amblue", 0, 0, 18, 0, 168, 16)
+    m.lathe("halo", [(26, 150), (44, 150), (44, 156), (26, 156)], 0, 0, 0, 24)
+    m.lathe("clockcase", [(18, 156), (46, 156), (46, 166), (18, 166)], 0, 0, 0, 24)
+    return m
+
+
+def seats():
+    """A row of six black waiting-room seats on a steel beam, facing -y.
+    Origin: middle of the row at the floor; spans x = -72..72."""
+    m = Mesh()
+    _box(m, "stainless", -74, -4, 10, 74, 4, 14)
+    for k in (-60, 60):
+        _box(m, "stainless", k - 2, -8, 0, k + 2, 8, 14)
+    for i in range(6):
+        x = -72 + i * 24
+        _box(m, "seat", x + 1, -10, 14, x + 23, 10, 18)
+        _box(m, "seat", x + 1, 9, 18, x + 23, 12, 36)
+    return m
+
+
+MODELS = {"amcol": amcol, "seats": seats, "colboard": colboard, "tvm": tvm, "escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
 
 
 def build():

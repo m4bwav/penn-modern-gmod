@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/pennmodern/halo"
+	"$surfaceprop" "metal"
+	"$model" "1"
+}

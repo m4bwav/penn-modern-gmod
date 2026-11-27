@@ -21,6 +21,13 @@ local CAMS = {  -- Moynihan blockout (session 2): 200 x 155 ft hall, wells, side
   { "pavilion",   Vector(3700, 150, -290), Angle(-12, -10, 0) },
   { "lirr_east",  Vector(6780, 200, -290), Angle(-3, 185, 0) },
   { "mezz",       Vector(5350, 250, 72), Angle(10, 200, 0) },
+  { "tvm",        Vector(2720, -60, -300), Angle(8, -90, 0) },
+  { "amtrak_stair", Vector(3024, -250, -300), Angle(-12, -90, 0) },
+  { "amtrak_north", Vector(3024, -760, -175), Angle(-4, -75, 0) },
+  { "amtrak_west",  Vector(2150, -1560, -175), Angle(-6, 0, 0) },
+  { "amtrak_board", Vector(3600, -1350, -180), Angle(-8, 90, 0) },
+  { "amtrak_wait",  Vector(2660, -1960, -175), Angle(8, -140, 0) },
+  { "amtrak_esc",   Vector(4600, -1400, -170), Angle(22, 200, 0) },
 }
 if want ~= "go" then
   local keep, set = {}, {}
