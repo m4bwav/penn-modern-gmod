@@ -128,7 +128,7 @@ def _box(m, mat, x0, y0, z0, x1, y1, z1, faces=None):
              ((0, -1, 0), [(x0, y0, z0), (x1, y0, z0), (x1, y0, z1), (x0, y0, z1)]),
              ((0, 0, 1), [(x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1)]),
              ((0, 0, -1), [(x0, y1, z0), (x1, y1, z0), (x1, y0, z0), (x0, y0, z0)])]
-    uv = ((0, 1), (1, 1), (1, 0), (0, 0))
+    uv = ((0, 0), (1, 0), (1, 1), (0, 1))   # SMD v runs up: v 0 at z0 (was flipped: boards read upside down)
     for nrm, q in sides:
         m.quad(faces.get(nrm, mat), *[(p, nrm, uv[i]) for i, p in enumerate(q)])
 
@@ -206,7 +206,26 @@ def escalator():
     return m
 
 
-MODELS = {"escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
+def colboard():
+    """Two LIRR departure boards (2.5 x 5 ft) back to back on a 30 in column, facing +-x along the
+    corridor (place yaw 90). Origin: column centre at the floor; boards span z 6.5..11.5 ft."""
+    m = Mesh()
+    for sx in (1, -1):
+        x0, x1 = sorted((sx * 15, sx * 21))
+        _box(m, "clockcase", x0, -15, 78, x1, 15, 138, faces={(sx, 0, 0): "depboard"})
+    return m
+
+
+def tvm():
+    """An LIRR ticket machine, 30 in wide, 18 in deep, 66 in tall, its screen facing +y
+    (place yaw 90). Origin: back of the machine at the floor, centred."""
+    m = Mesh()
+    _box(m, "stainless", -15, 0, 0, 15, 18, 66, faces={(0, 1, 0): "tvm_front"})
+    _box(m, "clockcase", -16, 0, 66, 16, 20, 70)
+    return m
+
+
+MODELS = {"colboard": colboard, "tvm": tvm, "escalator": escalator, "truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
 
 
 def build():

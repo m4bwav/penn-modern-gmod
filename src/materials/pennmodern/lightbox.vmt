@@ -1,6 +1,5 @@
-"LightmappedGeneric"
+"UnlitGeneric"
 {
 	"$basetexture" "pennmodern/lightbox"
 	"$surfaceprop" "glass"
-	"$selfillum" "1"
 }

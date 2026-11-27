@@ -26,3 +26,5 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-11-26] add | session 8: LIRR concourse blockout
 - 9 Commons refs (CC BY / BY-SA), lirr-dimensions.md, lirr() in build_vmf.py: passage under Eighth Avenue through a real opening in the stub's east wall, 57 ft x 18 ft corridor (wood/white ceilings, blue columns), 40 ft lit-coffer 33rd St pavilion with an escalator to a sealed street mezzanine. 6 new textures. 1694 verts, 6.5 MB, 146 fps; walk 7/7 PASS (walk routes take an optional x target for level walks).
 - ceil_white with $selfillum still renders dark grey in game; not solved yet.
+## [2026-11-27] add | session 9: LIRR detail, 0.2.0
+- $selfillum on LightmappedGeneric brushes did not brighten ceil_white in game (tint or not); UnlitGeneric does. _box() UVs were v-flipped (text upside down). colboard + tvm MDLs, compare.py lirr set. 1681 verts, 6.6 MB, 146 fps, walk 7/7. Workshop 3846578407 updated, v0.2.0.

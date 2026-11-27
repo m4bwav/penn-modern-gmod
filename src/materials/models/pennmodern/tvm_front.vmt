@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/pennmodern/tvm_front"
+	"$surfaceprop" "metal"
+	"$model" "1"
+}
