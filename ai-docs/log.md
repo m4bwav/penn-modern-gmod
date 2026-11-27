@@ -13,3 +13,4 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - pm_textures.py rewritten for Moynihan and run by compile.sh; skylight.mdl translucent vault; shop fronts; LED boards need per-face UVs (u=+x reads mirrored on the +y-facing face). 756 verts, 146 fps, BSP 13.2 MB.
 ## [2026-11-26] add | session 4: gabled Pratt trusses, upper floor glazing, DXT textures
 - Truss profile now leg, knee, flat gable like the refs; DXT1/5 VTFs cut the BSP 13.2 to 4.2 MB. 742 verts, 146 fps.
+- 2026-11-26 session 4: ../penn-modern-gmod-s3 and -s4 folders could not be deleted (Permission denied, a shell held them); they are pruned from git, delete the leftovers if still there. srctools 2.7 writes DXT1/DXT5 VTFs directly.
