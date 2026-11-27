@@ -5,6 +5,7 @@ G="${GMOD:-D:/SteamLibrary/steamapps/common/GarrysMod}"
 cd "$(dirname "$0")/.."
 . tools/gmod_lock.sh; gmod_lock_take   # shared GMod lock, released on exit
 python tools/build_vmf.py
+python tools/pm_textures.py
 [ -f tools/pm_models.py ] && python tools/pm_models.py
 mkdir -p "$G/garrysmod/materials/pennmodern"
 mkdir -p src/materials/pennmodern; for f in src/materials/pennmodern/*; do [ -e "$f" ] && cp "$f" "$G/garrysmod/materials/pennmodern/"; done

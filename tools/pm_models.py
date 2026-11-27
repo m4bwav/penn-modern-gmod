@@ -26,7 +26,6 @@ LONG = 200 * FT          # hall length E-W (build_vmf.py 2*HX)
 VMTS = {
     "steel": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.82 0.84 0.86]"\n'
              '\t"$surfaceprop" "metal"\n}\n',
-    "clockface": '"UnlitGeneric"\n{\n\t"$basetexture" "lights/white002"\n\t"$color2" "[0.95 0.93 0.85]"\n\t"$model" "1"\n}\n',
     "clockcase": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.12 0.12 0.13]"\n'
                  '\t"$surfaceprop" "metal"\n}\n',
 }
@@ -94,7 +93,28 @@ def clock():
     return m
 
 
-MODELS = {"truss": truss, "purlins": purlins, "clock": clock}
+def skylight():
+    """The glass vault over the trusses (skylight.vmt from pm_textures.py, translucent, 6 ft cells).
+    Origin as purlins(); runs x = -LONG/2..LONG/2 just above the top chords."""
+    m = Mesh()
+    n, nx, cell = 24, 10, 12 * FT
+    pts = [arch(math.pi * k / n, -10) for k in range(n + 1)]
+    arc = [0.0]
+    for a, b in zip(pts, pts[1:]):
+        arc.append(arc[-1] + math.dist(a, b))
+    xs = [-LONG / 2 + LONG * i / nx for i in range(nx + 1)]
+    for i in range(nx):
+        for k in range(n):
+            (_, y0, z0), (_, y1, z1) = pts[k], pts[k + 1]
+            t = (math.pi * (k + .5) / n)
+            nrm = (0, -math.cos(t), -math.sin(t))   # faces down into the hall ($nocull shows both)
+            u0, u1, v0, v1 = xs[i] / cell, xs[i + 1] / cell, arc[k] / cell, arc[k + 1] / cell
+            m.quad("skylight", ((xs[i], y0, z0), nrm, (u0, v0)), ((xs[i], y1, z1), nrm, (u0, v1)),
+                   ((xs[i + 1], y1, z1), nrm, (u1, v1)), ((xs[i + 1], y0, z0), nrm, (u1, v0)))
+    return m
+
+
+MODELS = {"truss": truss, "purlins": purlins, "clock": clock, "skylight": skylight}
 
 
 def build():
@@ -104,7 +124,8 @@ def build():
     gmat.mkdir(parents=True, exist_ok=True)
     for name, text in VMTS.items():
         (MAT / f"{name}.vmt").write_text(text, encoding="ascii", newline="\n")
-        shutil.copy(MAT / f"{name}.vmt", gmat)
+    for f in MAT.glob("*.v[mt][tf]"):   # VMTS above plus pm_textures.py's model materials
+        shutil.copy(f, gmat)
     out = ROOT / "src" / "models" / "pennmodern"
     out.mkdir(parents=True, exist_ok=True)
     for name, fn in MODELS.items():
