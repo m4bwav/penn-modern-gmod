@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 python tools/build_vmf.py
 [ -f tools/pm_models.py ] && python tools/pm_models.py
 mkdir -p "$G/garrysmod/materials/pennmodern"
-cp src/materials/pennmodern/* "$G/garrysmod/materials/pennmodern/"
+mkdir -p src/materials/pennmodern; for f in src/materials/pennmodern/*; do [ -e "$f" ] && cp "$f" "$G/garrysmod/materials/pennmodern/"; done
 # vbsp's exit code is lost in a pipe and it can fail while an old BSP stays on disk: remove it first
 # and stop when vbsp reports a fatal error.
 rm -f src/gm_penn_modern.bsp
@@ -16,7 +16,7 @@ if [ ! -f src/gm_penn_modern.bsp ] || grep -q -i -E "bad normal|leaked|too many"
 "$G/bin/vvis.exe" -game "$G/garrysmod" ${FAST:+-fast} src/gm_penn_modern 2>&1 | tail -4
 "$G/bin/vrad.exe" -game "$G/garrysmod" ${FAST:+-fast} -both -lights src/lights.rad src/gm_penn_modern 2>&1 | tail -4
 : > src/packlist.txt
-for f in src/materials/pennmodern/*; do printf 'materials/pennmodern/%s\n%s\n' "$(basename "$f")" "$(cygpath -w "$PWD/$f" 2>/dev/null || echo "$PWD/$f")" >> src/packlist.txt; done
+for f in src/materials/pennmodern/*; do [ -e "$f" ] || continue; printf 'materials/pennmodern/%s\n%s\n' "$(basename "$f")" "$(cygpath -w "$PWD/$f" 2>/dev/null || echo "$PWD/$f")" >> src/packlist.txt; done
 for f in src/materials/models/pennmodern/* src/models/pennmodern/*; do [ -e "$f" ] || continue; r="${f#src/}"; printf '%s\n%s\n' "$r" "$(cygpath -w "$PWD/$f" 2>/dev/null || echo "$PWD/$f")" >> src/packlist.txt; done
 "$G/bin/bspzip.exe" -addlist src/gm_penn_modern.bsp src/packlist.txt src/gm_penn_modern.bsp 2>&1 | tail -2
 cp src/gm_penn_modern.bsp "$G/garrysmod/maps/"
