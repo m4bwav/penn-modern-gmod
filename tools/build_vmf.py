@@ -59,9 +59,10 @@ def hall(W):
     for y0, y1 in zip(ys[::2], ys[1::2]):
         W(box(-WX, y0, -SLAB, WX, y1, 0, TEX_FLOOR))
     # Glass balustrades round the wells, 42 in.
-    for y0, y1 in WELLS:
-        for x0, x1, ya, yb in ((-WX, WX, y0 - 2, y0), (-WX, WX, y1, y1 + 2), (-WX - 2, -WX, y0 - 2, y1 + 2),
-                               (WX, WX + 2, y0 - 2, y1 + 2)):
+    # No balustrade across the top end of each escalator (south well tops out east, north west).
+    for (y0, y1), top_east in zip(WELLS, (True, False)):
+        ends = [(-WX - 2, -WX)] if top_east else [(WX, WX + 2)]
+        for x0, x1, ya, yb in [(-WX, WX, y0 - 2, y0), (-WX, WX, y1, y1 + 2)] + [(a, b, y0 - 2, y1 + 2) for a, b in ends]:
             W(box(x0, ya, 0, x1, yb, 42, TEX_GLASS))
 
 

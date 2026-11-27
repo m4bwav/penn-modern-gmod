@@ -1,13 +1,14 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-26 (session 6)
+Updated: 2026-11-26 (session 7)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
-- Chain: session 6 of 40
+- Chain: session 7 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
-- Workshop ID: none yet. First upload creates a new item (gmpublish create); record the ID here and in tools/package.sh.
+- Workshop ID: 3846578407 (public, created session 7; default in tools/package.sh). Updates: sh tools/package.sh "note" [previews].
+- Version: 0.1.0 (tag v0.1.0, Moynihan Train Hall).
 
 ## Grants
 - Driver: chain_loop.py, PID 381748 (started 2026-11-26 21:35, chainwright 0.16.0 chain_loop.py, stdout/stderr C:/Users/m4bwa/.chainwright/penn-modern-driver.out/.err), prompt copy C:/Users/m4bwa/.chainwright/penn-modern-prompt.md, stop check C:/Users/m4bwa/.chainwright/penn_modern_stop.py, log C:/Users/m4bwa/.chainwright/penn-modern-chain.log, ledger C:/Users/m4bwa/.chainwright/penn-modern-ledger.json. Bounds: 40 sessions, 24 h, 180 min per session, limit wait 1800 s x 12, retry failed 1. Sessions it starts never start another driver.
@@ -26,9 +27,11 @@ Updated: 2026-11-26 (session 6)
 
 - Session 6 (branch s6-escalators): escalator.mdl (pm_models.py: a pair of 40 in escalators per well, 8 in risers, stainless decks and cladding, glass balustrades, black handrails) placed yaw 90 / 270; the ramp wedges are now tools/toolsplayerclip so players still walk them. Pylon heads got a pylon_screen texture (amber TRACKS, white 11 12, pylon_uv in build_vmf.py; pylons moved to x = +-450 so the texture starts on the face edge). Storefront texture evened out (fbm 0.5 to 0.12, shelving shade per bay). Full compile: vertexes 1224, faces 888, brushes 113, BSP 4.7 MB; shots/20261126-2314 all 146 fps.
 
+- Session 7 (branch s7-release): tools/walk.sh + lua/pm_walk_sv.lua walk test (StartCommand forces +forward; start points must clear the step under the 32 u hull). Found and fixed: the glass balustrade across each well's top end blocked the escalator exit. All 5 routes PASS (both stairs to z 258, both escalators up, one down). Full compile: vertexes 1218, faces 880, brushes 111, BSP 4.6 MB; shots/20261126-2328 all 880-1120 fps uncapped. 0.1.0: README with Z-Image Turbo banner (docs/banner.jpg), docs/level-map.png (tools/make_map.py rewritten for this map), LICENSE (MIT tools, CC BY-SA map), SECURITY.md, workshop/description.txt, licence audit in ai-docs/notes/licence-audit-0.1.0.md, Workshop 3846578407 created and made public with 5 previews, tag v0.1.0 and GitHub release, repo public.
+
 ## Next
-1. Session 7: walk the balcony stairs and escalator clips in game (noclip off; 16 u treads, 12 u risers), then cut 0.1.0: README with a ComfyUI banner (no Krea 2), level map, licence audit of refs/ and every asset, LICENSE, SECURITY.md, wiki, tag and release, first Workshop upload as a NEW item (gmpublish create), record the ID here and in tools/package.sh, make the repo public.
-2. Then area 2: the LIRR concourse (2021 rebuild) refs and blockout, joined to the West End Concourse stub.
+1. Session 8: area 2, the LIRR concourse (2021 rebuild): Commons refs (refs/SOURCES.md), dimensions in ai-docs/notes/, blockout joined to the West End Concourse stub through a real opening (currently sealed), compile, walk, shots.
+2. Wiki for the repo (wikiwright) if session 7 did not finish it.
 
 ## Waiting on Mark
 - Nothing.

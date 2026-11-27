@@ -1,0 +1,22 @@
+[h1]Penn Station today: Moynihan Train Hall[/h1]
+New York's Penn Station as it is now, at true scale. This first release is Moynihan Train Hall, opened in 2021 inside the old Farley post office across Eighth Avenue: a 31,000 sq ft hall under a 92 ft glass skylight on gabled steel trusses, the four-faced clock hanging in the middle, lit shop fronts under balconies on both sides, stairs up to the balconies and two pairs of escalators down to the West End Concourse.
+
+The LIRR, Amtrak and NJ Transit concourses under Madison Square Garden, the platforms with a train and the Eighth Avenue entrances will follow in updates.
+
+[h2]Details[/h2]
+[list]
+[*]Map name: gm_penn_modern
+[*]Spawn at the west end of the hall (see the level map in the screenshots)
+[*]Runs at hundreds of frames per second on a mid-range PC
+[*]Needs nothing else installed
+[/list]
+
+[h2]Source and credits[/h2]
+[list]
+[*]Source and build scripts: [url=https://github.com/m4bwav/penn-modern-gmod]github.com/m4bwav/penn-modern-gmod[/url]
+[*]Built with [url=https://github.com/m4bwav/modwright]modwright[/url], an agent plugin for modding games.
+[*]Textures and models are original and procedural, made by scripts in the repository, plus stock Half-Life 2 materials. No AI-generated images are in the map.
+[*]Proportions and colours were matched against Wikimedia Commons photographs (CC0, CC BY, CC BY-SA). Full list with authors: refs/SOURCES.md in the repository.
+[*]Map source and textures: CC BY-SA 4.0. Tools: MIT.
+[/list]
+Not affiliated with Amtrak, the LIRR or NJ Transit.
