@@ -39,3 +39,4 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - 6 Commons refs (5 CC0, 1 BY-SA), platform-dimensions.md, platforms(): island platform between two tracks 30 ft under the Amtrak/NJT halls, Amtrak escalator lands on it, new stair up through the NJT floor, pmcar.mdl MultiLevel coaches x4. 3216 verts, 11.4 MB, 142+ fps, walk 13/13.
 - make_map.py: the platform ceiling slab (z -320..-304) fell into the "30 ft below" slice and painted the whole platform blue; platform-level brushes are now filtered first.
 - The Bash tool's heredoc turns a doubled backslash into one: build VMT strings in pm_textures.py from existing constants (VLG = UNLIT.replace(...)) instead of writing escapes through Bash.
+- 0.5.0 Workshop update done (EResult 1) after waiting out penn-gmod's shots lock; tag v0.5.0 and release on 7011386.
