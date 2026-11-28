@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/pennmodern/esctread"
+	"$surfaceprop" "metal"
+	"$model" "1"
+}

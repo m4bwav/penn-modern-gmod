@@ -515,6 +515,40 @@ def props(E):
           solid="6"))
 
 
+ESC_V = 90                                # escalator push, horizontal u/s (~100 u/s along the 28 degree slope)
+WALK_V = 100                              # moving walkway belt speed, u/s
+WKX0, WKX1 = 1000, 1880                   # moving walkways in the passage under Eighth Avenue (73 ft)
+TEX_BELT_E, TEX_BELT_W = "pennmodern/walkbelt_e", "pennmodern/walkbelt_w"
+
+
+def movers(W, E):
+    """Session 13: moving escalators and walkways. Every escalator.mdl holds two escalators; its SMD -y
+    lane runs up (tread_up scrolls toward the top) and its +y lane down. Over each lane of the playerclip
+    wedge a trigger_push adds a horizontal base velocity toward that lane's exit; ground movement keeps
+    the player on the slope. A push with an upward component would lift the player off the ground every
+    tick (CTriggerPush ungrounds on vecPush.z > 0), so the push is level. Lanes: (x0, x1, z bottom,
+    z top, y centre, climb sign: +1 climbs toward +x)."""
+    lanes = [(-WX, WX, LZ, 0, sum(WELLS[0]) // 2, 1), (-WX, WX, LZ, 0, sum(WELLS[1]) // 2, -1),
+             (MX - 672, MX, LZ, 0, (EY0 + EY1) // 2, 1), (EX0, EX1, AZ - 30 * FT, AZ, EYC, 1)]
+    for x0, x1, zb, zt, yc, climb in lanes:
+        # yaw 90 (climb +x) keeps SMD axes = world axes, so the up lane is at y < yc; yaw 270 mirrors it.
+        up = (yc - 64, yc) if climb > 0 else (yc, yc + 64)
+        dn = (yc, yc + 64) if climb > 0 else (yc - 64, yc)
+        for (ya, yb), d in ((up, climb), (dn, -climb)):
+            E(ent("trigger_push", solids=box(x0, ya, zb, x1, yb, zt + 80, "tools/toolstrigger"),
+                  pushdir="0 %d 0" % (0 if d > 0 else 180), speed=str(ESC_V), spawnflags="1", StartDisabled="0"))
+    # Moving walkways: two func_conveyor belts, eastbound on the south side (keep right), westbound on
+    # the north, each 4 ft wide and 4 u proud of the floor, with dark side rails; open floor between them
+    # and along both walls so the walk to the LIRR still goes down the middle.
+    for (ya, yb), d, tex in (((-92, -44), 0, TEX_BELT_E), ((44, 92), 180, TEX_BELT_W)):
+        E(ent("func_conveyor", solids=box(WKX0, ya, LZ, WKX1, yb, LZ + 4, tex), movedir="0 %d 0" % d,
+              speed=str(WALK_V), spawnflags="0", _minlight="0"))
+        for ra, rb in ((ya - 8, ya), (yb, yb + 8)):
+            W(box(WKX0, ra, LZ, WKX1, rb, LZ + 34, TEX_TRIM))
+            W(box(WKX0 - 4, ra - 2, LZ + 34, WKX1 + 4, rb + 2, LZ + 40, "pennmodern/trim_dark"))
+    vmf_lib.SCALE.update({TEX_BELT_E: 0.25, TEX_BELT_W: 0.25})
+
+
 def build():
     world, ents = [], []
     W, E = world.append, ents.append
@@ -526,6 +560,7 @@ def build():
     amtrak(W, E)
     njt(W, E)
     platforms(W, E)
+    movers(W, E)
     props(E)
     ents += [
         ent("light_environment", (0, 0, H - 64), angles="-60 30 0", pitch="-60",

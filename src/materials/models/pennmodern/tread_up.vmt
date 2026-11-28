@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/pennmodern/esctread"
+	"$surfaceprop" "metal"
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" "6"
+			"texturescrollangle" "180"
+		}
+	}
+}

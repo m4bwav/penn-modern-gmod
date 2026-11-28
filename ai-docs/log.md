@@ -40,3 +40,5 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 - make_map.py: the platform ceiling slab (z -320..-304) fell into the "30 ft below" slice and painted the whole platform blue; platform-level brushes are now filtered first.
 - The Bash tool's heredoc turns a doubled backslash into one: build VMT strings in pm_textures.py from existing constants (VLG = UNLIT.replace(...)) instead of writing escapes through Bash.
 - 0.5.0 Workshop update done (EResult 1) after waiting out penn-gmod's shots lock; tag v0.5.0 and release on 7011386.
+## [2026-11-28] add | movers: moving escalators and walkways, 0.6.0
+- Level trigger_push per escalator lane (90 u/s) over the playerclip wedges; a push with z > 0 would unground the player every tick, so it stays horizontal and the ramp does the climbing. func_conveyor (100 u/s) works for players in GMod for the flat walkways. TextureScroll moves the image toward -u: motion toward +u needs angle 180. walk 27/27 PASS, 985+ fps uncapped. Workshop update EResult 1.

@@ -1,0 +1,14 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "pennmodern/walkbelt_w"
+	"$surfaceprop" "rubber"
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" "1.5625"
+			"texturescrollangle" "0"
+		}
+	}
+}

@@ -1,14 +1,14 @@
 # HANDOFF: gm_penn_modern
 
 Status: in progress
-Updated: 2026-11-27 (session 12)
+Updated: 2026-11-28 (movers session, outside the chain count)
 
 - Prompt: plans/2026-11-26-penn-modern-40x-continue-prompt.md
 - Chain: session 12 of 40
 - Plan: plans/penn-modern-plan.md.
 - Garry's Mod: D:/SteamLibrary/steamapps/common/GarrysMod, SHARED with the penn-gmod chain; see the GMod lock rule in AGENTS.md.
 - Workshop ID: 3846578407 (public, created session 7; default in tools/package.sh). Updates: sh tools/package.sh "note" [previews].
-- Version: 0.5.0 (tag v0.5.0, Moynihan + LIRR + Amtrak + NJ Transit concourses + platforms).
+- Version: 0.6.0 (tag v0.6.0, moving escalators and walkways).
 
 ## Grants
 - Driver: chain_loop.py, PID 381748 (started 2026-11-26 21:35, chainwright 0.16.0 chain_loop.py, stdout/stderr C:/Users/m4bwa/.chainwright/penn-modern-driver.out/.err), prompt copy C:/Users/m4bwa/.chainwright/penn-modern-prompt.md, stop check C:/Users/m4bwa/.chainwright/penn_modern_stop.py, log C:/Users/m4bwa/.chainwright/penn-modern-chain.log, ledger C:/Users/m4bwa/.chainwright/penn-modern-ledger.json. Bounds: 40 sessions, 24 h, 180 min per session, limit wait 1800 s x 12, retry failed 1. Sessions it starts never start another driver.
@@ -38,6 +38,8 @@ Updated: 2026-11-27 (session 12)
 - Session 11 (branch s11-njt): area 4, the NJ Transit concourse. 2 CC0 refs in refs/SOURCES.md, ai-docs/notes/njt-dimensions.md. build_vmf.py njt(): 200 x 60 ft hall at the Amtrak floor (cited: same level) through a 20 ft opening in the Amtrak east wall; diamond pink/grey granite floor (floor_njt), cream marble walls (wall_njt), 12 ft white side ceilings, a 20 ft vault down the middle with njtruss.mdl white arched trusses every 10 ft on njcol.mdl flared columns, track gates band on the north wall (trackgates), NJ Transit ticket windows on the south wall (njt_tickets). New glass_clean material replaces stock glasswindow007a on every brush (Amtrak waiting room polish); translucent VTFs need the EIGHTBITALPHA flag (pm_textures.save sets it). Full compile: vertexes 2285, faces 1599, brushes 214, BSP 9.1 MB; walk 11/11 PASS (to_njt new); shots/20261127-0048 all 23 cams 146+ fps. 0.4.0: README, level map, compare.py njt set, licence-audit-0.4.0.md, Workshop update, tag and release.
 
 - Session 12 (branch s12-platforms): area 5, the platforms. 6 refs (5 CC0, 1 CC BY-SA) in refs/SOURCES.md, ai-docs/notes/platform-dimensions.md. build_vmf.py platforms(): an island platform (32 ft) between two 12 ft trackways at z -600 under the Amtrak and NJ Transit halls, x 2400..7344, black tunnel ends, ceiling slab at the concourse floor underside with holes for the Amtrak escalator (its sealed landing is gone, it lands on the platform) and a new 30-riser stair up through the NJ Transit floor (x 6560..7040, glass rail). Rails at 56.5 in gauge, platform 48 in over the rail, yellow tactile edges, tan/blue columns. pmcar.mdl MultiLevel coach (85 x 10.5 x 15.5 ft), four on the north track. 8 new textures. Full compile: vertexes 3216, faces 2343, brushes 275, BSP 11.4 MB; walk 13/13 PASS (njt_stair_down/up new); shots/20261127-0059 all 28 cams 142+ fps. 0.5.0: README, level map (platforms in orange), licence-audit-0.5.0.md, Workshop update (EResult 1), tag v0.5.0 and release.
+
+- Movers (branch movers, 2026-11-28): every escalator moves. build_vmf.py movers(): a level trigger_push (90 u/s) over each lane of the four escalator wedges (Moynihan x2, LIRR pavilion, Amtrak), up lane on the model's SMD -y side; tread tops scroll (tread_up/tread_dn, TextureScroll on esctread). Two func_conveyor moving walkways (100 u/s, scrolling walkbelt_e/w, dark rails) in the passage under Eighth Avenue, x 1000..1880 (decisions/2026-11-28-moving-walkway-under-eighth-avenue.md). How-to: solutions/moving-escalators-in-source.md. walk.sh: 27/27 PASS (ride_* idle, against_* walking). Shots shots/20261128-0136 and -0142, 985-1170 fps uncapped. 0.6.0: README, Workshop description + update (EResult 1), licence-audit-0.6.0.md, tag and release.
 
 ## Next
 1. Session 13: area 6, the Eighth Avenue entrances and street: refs first (Farley facade and colonnade, Moynihan's street entrances, Eighth Avenue stairs, MSG), dimensions note, then blockout of a street slice at z 0 over the passage under Eighth Avenue. The NJT vault crown is at z 0 and the LIRR mezzanine is sealed at z 0: keep the street clear of both or join them for real.
