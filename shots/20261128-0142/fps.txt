@@ -1,0 +1,2 @@
+walkway         147 fps
+esc_tread       147 fps

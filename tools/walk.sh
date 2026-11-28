@@ -12,7 +12,7 @@ cp tools/lua/a_pm_nofnaf.lua "$G/garrysmod/lua/autorun/a_pm_nofnaf.lua"
 rm -rf "$D/pm_walk"; echo go > "$D/pm_walk_go.txt"
 gmod_snapshot
 "$G/gmod.exe" -windowed -w 1280 -h 720 -novid -nojoy -condebug +sv_cheats 1 +vj_fnaf_cache 0 +map gm_penn_modern &
-for n in $(seq 1 ${WAIT:-60}); do [ -f "$D/pm_walk/done.txt" ] && break; sleep 5; done
+for n in $(seq 1 ${WAIT:-100}); do [ -f "$D/pm_walk/done.txt" ] && break; sleep 5; done
 sleep 2
 gmod_kill_own
 rm -f "$G/garrysmod/lua/autorun/server/pm_walk_sv.lua" "$G/garrysmod/lua/autorun/a_pm_nofnaf.lua" "$D/pm_walk_go.txt"

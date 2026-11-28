@@ -17,6 +17,8 @@ local CAMS = {  -- Moynihan blockout (session 2): 200 x 155 ft hall, wells, side
   { "stair", Vector(-500, -720, 120), Angle(10, 190, 0) },
   { "lower",      Vector(-780, 0, -290), Angle(-5, 0, 0) },
   { "passage",    Vector(700, 0, -290), Angle(0, 0, 0) },
+  { "walkway",    Vector(940, -160, -240), Angle(22, 25, 0) },
+  { "esc_tread",  Vector(-100, -420, 120), Angle(40, 80, 0) },
   { "lirr_west",  Vector(2100, -250, -290), Angle(-3, 8, 0) },
   { "pavilion",   Vector(3700, 150, -290), Angle(-12, -10, 0) },
   { "lirr_east",  Vector(6780, 200, -290), Angle(-3, 185, 0) },

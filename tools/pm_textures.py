@@ -431,3 +431,27 @@ dr = ImageDraw.Draw(im)
 dr.rectangle((30, 60, 98, 230), fill=(30, 30, 32))
 dr.rectangle((40, 80, 88, 140), fill=(60, 66, 72))
 save(np.asarray(im, float), "mlend", VLG, surf="metal", model=True)
+
+# Escalator tread top (model, session 13): grey aluminium cleats running with the travel, a yellow
+# demarcation band at one edge. One step per repeat in u; tread_up / tread_dn (pm_models.py) scroll it.
+im = Image.new("RGB", (128, 128), (96, 98, 102))
+dr = ImageDraw.Draw(im)
+for y in range(0, 128, 8):
+    dr.rectangle((0, y, 127, y + 2), fill=(40, 42, 46))
+dr.rectangle((0, 0, 14, 127), fill=(230, 190, 30))
+save(np.asarray(im, float), "esctread", VLG, surf="metal", model=True)
+
+# Moving walkway belt (brush, session 13): dark pallets, fine grooves along the travel, a seam every
+# 16 u (64 px at scale 0.25). walkbelt_e / walkbelt_w scroll it at 100 u/s = 1.5625 repeats/s;
+# TextureScroll moves the image toward -u (u = +x on a floor), so the eastbound belt uses angle 180.
+im = Image.new("RGB", (256, 256), (58, 60, 64))
+dr = ImageDraw.Draw(im)
+for y in range(0, 256, 8):
+    dr.rectangle((0, y, 255, y + 2), fill=(30, 31, 34))
+for x in range(0, 256, 64):
+    dr.rectangle((x, 0, x + 3, 255), fill=(20, 20, 22))
+for name, ang in (("walkbelt_e", 180), ("walkbelt_w", 0)):
+    save(np.asarray(im, float), name, '"LightmappedGeneric"\n{\n\t"$basetexture" "%s"\n\t"$surfaceprop" "%s"\n'
+         '\t"Proxies"\n\t{\n\t\t"TextureScroll"\n\t\t{\n\t\t\t"texturescrollvar" "$basetexturetransform"\n'
+         '\t\t\t"texturescrollrate" "1.5625"\n\t\t\t"texturescrollangle" "' + str(ang) + '"\n\t\t}\n\t}\n}\n',
+         surf="rubber")

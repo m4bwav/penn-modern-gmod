@@ -9,6 +9,8 @@ Update 0.4.0 adds the NJ Transit concourse through the Amtrak hall's east wall: 
 
 Update 0.5.0 adds the platforms: take the Amtrak escalator or the new stair in the NJ Transit floor down to an island platform between two tracks, with yellow edge strips, tan-and-blue columns, a low beamed ceiling and a four-car NJ Transit MultiLevel train.
 
+Update 0.6.0 makes the escalators move: each one has an up lane and a down lane that carry you with visibly moving steps (you can still walk against them), and two moving walkways run in opposite directions through the passage under Eighth Avenue.
+
 The Eighth Avenue entrances will follow in an update.
 
 [h2]Details[/h2]

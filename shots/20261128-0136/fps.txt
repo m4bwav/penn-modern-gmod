@@ -1,0 +1,8 @@
+hall_west      1041 fps
+wells          1027 fps
+passage        1063 fps
+walkway        1054 fps
+esc_tread      1035 fps
+pavilion       1170 fps
+plat_esc       1082 fps
+amtrak_esc      985 fps

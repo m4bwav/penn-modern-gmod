@@ -30,6 +30,15 @@ VMTS = {
                  '\t"$surfaceprop" "metal"\n}\n',
     "steptread": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.3 0.31 0.32]"\n'
                  '\t"$surfaceprop" "metal"\n}\n',
+    # Moving tread tops (session 13): esctread.vtf from pm_textures.py, one step per texture repeat (u 0..1
+    # across each tread), scrolled at the escalator's horizontal speed (90 u/s / 14.9 u step = 6 per second).
+    # TextureScroll moves the image toward -u, so the up lane (moving +x in SMD space) uses angle 180.
+    "tread_up": '"VertexLitGeneric"\n{\n\t"$basetexture" "models/pennmodern/esctread"\n\t"$surfaceprop" "metal"\n'
+                '\t"Proxies"\n\t{\n\t\t"TextureScroll"\n\t\t{\n\t\t\t"texturescrollvar" "$basetexturetransform"\n'
+                '\t\t\t"texturescrollrate" "6"\n\t\t\t"texturescrollangle" "180"\n\t\t}\n\t}\n}\n',
+    "tread_dn": '"VertexLitGeneric"\n{\n\t"$basetexture" "models/pennmodern/esctread"\n\t"$surfaceprop" "metal"\n'
+                '\t"Proxies"\n\t{\n\t\t"TextureScroll"\n\t\t{\n\t\t\t"texturescrollvar" "$basetexturetransform"\n'
+                '\t\t\t"texturescrollrate" "6"\n\t\t\t"texturescrollangle" "0"\n\t\t}\n\t}\n}\n',
     "rubber": '"VertexLitGeneric"\n{\n\t"$basetexture" "metal/metalwall001a"\n\t"$color2" "[0.05 0.05 0.05]"\n'
               '\t"$surfaceprop" "rubber"\n}\n',
     "escglass": '"VertexLitGeneric"\n{\n\t"$basetexture" "glass/glasswindow007a"\n\t"$translucent" "1"\n'
@@ -193,11 +202,11 @@ def escalator():
     z = lambda x: (x + L) * R / ESC_RUN - R
     n = R // 8                                    # 8 u (8 in) risers
     d = ESC_RUN / n
-    for yc in (-33, 33):
+    for yc, top in ((-33, "tread_up"), (33, "tread_dn")):   # SMD -y lane runs up, +y lane down (build_vmf movers)
         a, b = yc - 20, yc + 20                   # 40 in step width
         for i in range(n):
             x0 = -L + i * d
-            _box(m, "steptread", x0, a, -R + i * 8 - 2, x0 + d, b, -R + (i + 1) * 8)
+            _box(m, "steptread", x0, a, -R + i * 8 - 2, x0 + d, b, -R + (i + 1) * 8, faces={(0, 0, 1): top})
         for y0, y1 in ((a - 10, a), (b, b + 10)):     # inner deck and skirt on each side, sloped
             pts = [(-L, z(-L) - 30), (L, z(L) - 30), (L, z(L) + 6), (-L, z(-L) + 6)]
             m.quad("stainless", *[((x, y0, zz), (0, -1, 0), (x / 96, zz / 96)) for x, zz in pts])
